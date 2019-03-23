@@ -10,7 +10,7 @@ namespace Discans.Attributes
     public class AdminAttribute : PreconditionAttribute
     {
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services) =>
-            (context.Message.Author as IGuildUser).Guild.Roles.Any(x => x.Permissions.Administrator)
+            (context.Message.Author as IGuildUser).GuildPermissions.Administrator
                 ? Task.FromResult(PreconditionResult.FromSuccess())
                 : Task.FromResult(PreconditionResult.FromError("Você precisa ser um admin para executar esse comando =/"));
     }
