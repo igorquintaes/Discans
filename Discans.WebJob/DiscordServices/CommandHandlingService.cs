@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Discans.DiscordServices;
-using Discans.Shared.Models;
 using Discans.Shared.Services;
 using Discord.Commands;
 using Discord.WebSocket;

@@ -20,6 +20,7 @@ namespace Discans
             _commands = commands;
             _provider = provider;
 
+            _discord.SetGameAsync($"{Consts.BotCommand}info", "https://github.com/igorquintaes/Discans");
             _discord.MessageReceived += MessageReceived;
         }
 
