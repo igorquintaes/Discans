@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Discans.Shared.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190319205434_Initial")]
+    [Migration("20190424195359_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,7 +46,7 @@ namespace Discans.Shared.Migrations
 
                     b.HasIndex("MangaId");
 
-                    b.ToTable("PrivateTrackings");
+                    b.ToTable("PrivateAlerts");
                 });
 
             modelBuilder.Entity("Discans.Shared.Models.ServerAlert", b =>
@@ -62,7 +62,7 @@ namespace Discans.Shared.Migrations
 
                     b.HasIndex("MangaId");
 
-                    b.ToTable("ServerAlert");
+                    b.ToTable("ServerAlerts");
                 });
 
             modelBuilder.Entity("Discans.Shared.Models.ServerChannel", b =>
@@ -92,7 +92,7 @@ namespace Discans.Shared.Migrations
 
                     b.HasIndex("MangaId");
 
-                    b.ToTable("UserAlert");
+                    b.ToTable("UserAlerts");
                 });
 
             modelBuilder.Entity("Discans.Shared.Models.PrivateAlert", b =>

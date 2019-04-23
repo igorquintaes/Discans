@@ -7,15 +7,18 @@ Discord bot to notify when manga chapter is released in english, based on MangaU
 | ------- | ----------- |
 | info | Discans introduce itself and says Github page link to user see all commands available. | 
 | channel | Set the default channel to receive user alerts or server alerts. |
-| server-alert [link] | Creates an alert to @everyone when a new manga be released in that Discord server. **Only an Admin can use that command.** | 
+| server-alert [link] | Creates an alert to @everyone when a new manga chapter be released in that Discord server. **Only an Admin can use that command.** | 
 | server-alert-remove [link] | Delete a server alert already registered to @everyone in that Discord server. **Only an Admin can use that command.** |
-| server-alert-remove-all | Delete all alerts created inside the Discord Server. It can be User Alerts or Server Alerts. **Only an Admin can use that command** and **has a confirmation message.** |
+| server-alert-remove-all | Remove manga's alerts in the Discord Server. It can be User Alerts or Server Alerts. **Only an Admin can use that command** and **has a confirmation message.** |
 | server-alert-list | List all alerts configurated to @everyone in this that Discord Server. | 
 | server-alert-list-all | ist all alerts configurated to @everyone and @users in this that Discord Server. | 
-| user-alert [link] [user(s)] | Create an alert to @user(s) when a new manga be released. **Only an Admin can create alert to other users than not you.** | 
-| user-alert-remove [link] [user(s)] | Removes alerts assigned to @user(s) based on a unique manga. **Only an Admin can remove alerts from other users than not you.** | 
+| user-alert [link] [user(s)] | Create an alert to @user(s) when a new manga chapter be released. **Only an Admin can create alert to other users than not you.** | 
+| user-alert-remove [link] [user(s)] | Remove manga's alerts assigned to @user(s). **Only an Admin can remove alerts from other users than not you.** | 
 | user-alert-remove [user(s)] | Removes all alerts assigned to @user(s). **Only an Admin can remove alerts from other users than not you.** |
 | user-alert-list | List all alerts configurated to @users in this that Discord Server. | 
+| private-alert [link] | Creates an alert to send you a Direct Message when a new manga chapter be released. |
+| private-alert-remove [link] | Remove manga's alerts assigned to the user in Direct Message. |
+| private-alert-list | List all alerts configurated to send as Direct Message for that user. |
 
 ### Commands usage examples
 ```
@@ -33,6 +36,9 @@ discans user-alert-remove https://www.mangaupdates.com/series.html?id=88 @user#1
 discans user-alert-remove @user#1 
 discans user-alert-remove @user#1 @user#2 @user#3
 discans user-alert-list
+discans private-alert https://www.mangaupdates.com/series.html?id=88
+discans private-alert-remove https://www.mangaupdates.com/series.html?id=88
+discans private-alert-list
 ```
 
 ## Requirements & How to build
@@ -44,11 +50,11 @@ discans user-alert-list
 
 A production environment is defined as `ASPNETCORE_ENVIRONMENT` == `production`, case insensitively as Environment Variable. 
 
-`Discans` Project runs the Discord bot to interact with user messages, and `Discans.WebJob` is a cron job who checks when there is a new manga release. 
+`Discans` Project runs the Discord bot to interact with user messages, and `Discans.WebJob` is a cron job who checks when there is a new manga chapter released. 
 
 ## Pending Developments
 
 - [x] Alert @Everyone
 - [x] Alert @User
 - [ ] Alert @Role
-- [ ] Alert @User by Private Message
+- [x] Alert @User by Direct Message

@@ -49,6 +49,7 @@ namespace Discans.WebJob
                 .AddSingleton(_config)
                 .AddSingleton<MangaService>()
                 .AddSingleton<UserAlertService>()
+                .AddSingleton<PrivateAlertService>()
                 .AddSingleton<ServerAlertService>()
                 .AddSingleton<MangaUpdatesCrawlerService>()
                 .AddSingleton<ChannelService>()

@@ -48,6 +48,7 @@ namespace Discans
                 .AddSingleton(_config)
                 .AddScoped<MangaUpdatesCrawlerService>()
                 .AddScoped<MangaService>()
+                .AddScoped<PrivateAlertService>()
                 .AddScoped<UserAlertService>()
                 .AddScoped<ServerAlertService>()
                 .AddScoped<ChannelService>()

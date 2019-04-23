@@ -35,7 +35,7 @@ namespace Discans.Shared.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PrivateTrackings",
+                name: "PrivateAlerts",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -45,9 +45,9 @@ namespace Discans.Shared.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PrivateTrackings", x => x.Id);
+                    table.PrimaryKey("PK_PrivateAlerts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PrivateTrackings_Mangas_MangaId",
+                        name: "FK_PrivateAlerts_Mangas_MangaId",
                         column: x => x.MangaId,
                         principalTable: "Mangas",
                         principalColumn: "Id",
@@ -55,7 +55,7 @@ namespace Discans.Shared.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ServerAlert",
+                name: "ServerAlerts",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -65,9 +65,9 @@ namespace Discans.Shared.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServerAlert", x => x.Id);
+                    table.PrimaryKey("PK_ServerAlerts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ServerAlert_Mangas_MangaId",
+                        name: "FK_ServerAlerts_Mangas_MangaId",
                         column: x => x.MangaId,
                         principalTable: "Mangas",
                         principalColumn: "Id",
@@ -75,7 +75,7 @@ namespace Discans.Shared.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAlert",
+                name: "UserAlerts",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -86,9 +86,9 @@ namespace Discans.Shared.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserAlert", x => x.Id);
+                    table.PrimaryKey("PK_UserAlerts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserAlert_Mangas_MangaId",
+                        name: "FK_UserAlerts_Mangas_MangaId",
                         column: x => x.MangaId,
                         principalTable: "Mangas",
                         principalColumn: "Id",
@@ -96,34 +96,34 @@ namespace Discans.Shared.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrivateTrackings_MangaId",
-                table: "PrivateTrackings",
+                name: "IX_PrivateAlerts_MangaId",
+                table: "PrivateAlerts",
                 column: "MangaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServerAlert_MangaId",
-                table: "ServerAlert",
+                name: "IX_ServerAlerts_MangaId",
+                table: "ServerAlerts",
                 column: "MangaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAlert_MangaId",
-                table: "UserAlert",
+                name: "IX_UserAlerts_MangaId",
+                table: "UserAlerts",
                 column: "MangaId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PrivateTrackings");
+                name: "PrivateAlerts");
 
             migrationBuilder.DropTable(
-                name: "ServerAlert");
+                name: "ServerAlerts");
 
             migrationBuilder.DropTable(
                 name: "ServerChannels");
 
             migrationBuilder.DropTable(
-                name: "UserAlert");
+                name: "UserAlerts");
 
             migrationBuilder.DropTable(
                 name: "Mangas");

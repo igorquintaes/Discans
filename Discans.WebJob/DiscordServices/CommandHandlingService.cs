@@ -61,7 +61,7 @@ namespace Discans.WebJob.Services
             {
                 var lastRelease = lastReleases.First(x => x.Id == manga.Id).LastRelease;
                 if (manga.LastRelease == lastRelease)
-                    break;
+                    continue;
 
                 await mangaService.UpdateLastRelease(manga.Id, lastRelease);
 
@@ -75,6 +75,34 @@ namespace Discans.WebJob.Services
                     var users = string.Join(", ", userAlert.Select(x => $"<@{x.UserId}>"));
                     await SendServerMessage(users, manga.Name, lastRelease, userAlert.Key);
                 }
+
+                foreach (var privateAlert in manga.PrivateAlerts)
+                {
+                    await SendPrivateMessage(privateAlert.UserId, manga.Name, manga.LastRelease);
+                }
+            }
+        }
+
+        private async Task SendPrivateMessage(ulong userId, string mangaName, string lastRelease)
+        {
+            try
+            {
+                var message = 
+$@"Temos um novo capítulo em inglês de `{mangaName}!`
+Capítulo lançado: {lastRelease}";
+
+                var channel = await discord.GetUser(userId).GetOrCreateDMChannelAsync();
+                await channel.SendMessageAsync(message);
+            }
+            catch (Exception e) when (e.Message.Contains("error 50007")  // Cannot send messages to this user
+                                   || e.Message.Contains("error 10013")) // Unknown user
+            {
+                // We will not send messages under those conditions. 
+                // It occurs when a user blocks Discans Bot, or when a user account is deleted.
+            }
+            catch(Exception e)
+            {
+                // todo: log
             }
         }
 

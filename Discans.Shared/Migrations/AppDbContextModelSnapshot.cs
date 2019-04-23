@@ -44,7 +44,7 @@ namespace Discans.Shared.Migrations
 
                     b.HasIndex("MangaId");
 
-                    b.ToTable("PrivateTrackings");
+                    b.ToTable("PrivateAlerts");
                 });
 
             modelBuilder.Entity("Discans.Shared.Models.ServerAlert", b =>
@@ -60,7 +60,7 @@ namespace Discans.Shared.Migrations
 
                     b.HasIndex("MangaId");
 
-                    b.ToTable("ServerAlert");
+                    b.ToTable("ServerAlerts");
                 });
 
             modelBuilder.Entity("Discans.Shared.Models.ServerChannel", b =>
@@ -90,7 +90,7 @@ namespace Discans.Shared.Migrations
 
                     b.HasIndex("MangaId");
 
-                    b.ToTable("UserAlert");
+                    b.ToTable("UserAlerts");
                 });
 
             modelBuilder.Entity("Discans.Shared.Models.PrivateAlert", b =>

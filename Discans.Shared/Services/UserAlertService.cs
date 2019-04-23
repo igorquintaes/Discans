@@ -17,7 +17,7 @@ namespace Discans.Shared.Services
 
         public async Task<IList<UserAlert>> GerUserServerAlert(ulong serverId, ulong userId) => 
             await dbContext
-                .UserAlert
+                .UserAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId 
                     && x.UserId == userId)
@@ -25,7 +25,7 @@ namespace Discans.Shared.Services
 
         public async Task<IList<UserAlert>> GetServerAlert(ulong serverId) => 
             await dbContext
-                .UserAlert
+                .UserAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId)
                 .ToListAsync();
@@ -33,7 +33,7 @@ namespace Discans.Shared.Services
         public async Task Create(IEnumerable<ulong> userIds, ulong serverId, Manga manga)
         {
             var createdAlerts = await dbContext
-                .UserAlert
+                .UserAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId &&
                             x.Manga.Id == manga.Id &&
@@ -49,34 +49,34 @@ namespace Discans.Shared.Services
         public async Task Remove(ulong serverId)
         {
             var alerts = await dbContext
-                .UserAlert
+                .UserAlerts
                 .Where(x => x.ServerId == serverId)
                 .ToListAsync();
 
             foreach (var alert in alerts)
             {
-                dbContext.UserAlert.Remove(alert);
+                dbContext.UserAlerts.Remove(alert);
             }
         }
 
         public async Task Remove(ulong serverId, IEnumerable<ulong> userIds)
         {
             var alerts = await dbContext
-                .UserAlert
+                .UserAlerts
                 .Where(x => x.ServerId == serverId
                          && userIds.Contains(x.UserId))
                 .ToListAsync();
 
             foreach (var alert in alerts)
             {
-                dbContext.UserAlert.Remove(alert);
+                dbContext.UserAlerts.Remove(alert);
             }
         }
 
         public async Task Remove(ulong serverId, IEnumerable<ulong> userIds, int mangaId)
         {
             var alerts = await dbContext
-                .UserAlert
+                .UserAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId
                          && x.Manga.Id == mangaId
@@ -85,7 +85,7 @@ namespace Discans.Shared.Services
 
             foreach (var talertack in alerts)
             {
-                dbContext.UserAlert.Remove(talertack);
+                dbContext.UserAlerts.Remove(talertack);
             }
         }        
     }

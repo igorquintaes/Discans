@@ -140,7 +140,7 @@ Quem será alertado: [{usersReplyMessage}]
                
         [Command("user-alert-list")]
         [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
-        public async Task TrackList(IGuildUser user)
+        public async Task AlertList(IGuildUser user)
         {
             var alerts = await userAlertService.GerUserServerAlert(Context.Guild.Id, user.Id);
 
@@ -150,15 +150,11 @@ Quem será alertado: [{usersReplyMessage}]
                 return;
             }
 
-            var alertMessages = alerts.Select(x => {
-                var userText = Context.Guild.GetUser(x.UserId).Username;
-                var text =
+            var alertMessages = alerts.Select(x => 
 $@"```ini
 Mangá: [{x.Manga.Name}]
 Último lançamento: [{x.Manga.LastRelease}]
-```";
-                return text;
-            });
+```");
 
             await ReplyAsync($@"Alertas configurados diretamente para o usuário {Context.Guild.GetUser(user.Id).Username}:");
             var alertChuncks = alertMessages.ToList().ChunkList(10);

@@ -16,7 +16,7 @@ namespace Discans.Shared.Services
 
         public async Task<IList<ServerAlert>> Get(ulong serverId) => 
             await dbContext
-                .ServerAlert
+                .ServerAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId)
                 .ToListAsync();
@@ -24,7 +24,7 @@ namespace Discans.Shared.Services
         public async Task Create(ulong serverId, Manga manga)
         {
             var serverAlert = await dbContext
-                .ServerAlert
+                .ServerAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId
                          && x.Manga.Id == manga.Id)
@@ -42,26 +42,26 @@ namespace Discans.Shared.Services
         public async Task Remove(ulong serverId, int mangaId)
         {
             var alert = await dbContext
-                .ServerAlert
+                .ServerAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId
                          && x.Manga.Id == mangaId)
                 .FirstOrDefaultAsync();
 
-            dbContext.ServerAlert.Remove(alert);
+            dbContext.ServerAlerts.Remove(alert);
         }
 
         public async Task Remove(ulong serverId)
         {
             var alerts = await dbContext
-                .ServerAlert
+                .ServerAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId)
                 .ToListAsync();
 
             foreach (var alert in alerts)
             {
-                dbContext.ServerAlert.Remove(alert);
+                dbContext.ServerAlerts.Remove(alert);
             }
         }
     }
