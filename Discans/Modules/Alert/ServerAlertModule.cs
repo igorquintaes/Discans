@@ -172,7 +172,7 @@ Fonte de consulta: [{x.First().Manga.MangaSite.ToString()}]
                 return text;
             });
             
-            await ReplyAsync($@"Abaixo a lista de topdos os alertas configurados:");
+            await ReplyAsync($@"Abaixo a lista de todos os alertas configurados:");
             var alertChuncks = serverAlertMessages.Concat(userAlertMessages).ToList().ChunkList(7);
 
             foreach (var alertChunck in alertChuncks)

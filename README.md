@@ -1,23 +1,32 @@
 # Discans
-Discord bot to notify when manga chapter is released in english, based on MangaUpdates website. You can invite the last version of Discans to your server [using this link](https://discordapp.com/api/oauth2/authorize?client_id=556213286383648769&permissions=154624&scope=bot).
+Discord bot to notify when manga chapter is released in english, based on online websites that provide manga releases. You can invite the last version of Discans to your server [using this url](https://discordapp.com/api/oauth2/authorize?client_id=556213286383648769&permissions=154624&scope=bot).
+
+## Compatible Websites
+- MangaUpdates (url example: https://www.mangaupdates.com/series.html?id=88)
+- TuMangas (url example: https://tmofans.com/library/manga/8399/Berserk)
+
+## How to Use discans in your server
+- Invite Discans [using this url](https://discordapp.com/api/oauth2/authorize?client_id=556213286383648769&permissions=154624&scope=bot), or create and deploy your own version of the bot;
+- Open the channel that you want to receive Discans notifications and send `discans channel` keywords.
+- Now you can send commands for alert creation. You can check more about it above.
 
 ## Commands
 
 | Command | Description |
 | ------- | ----------- |
-| info | Discans introduce itself and says Github page link to user see all commands available. | 
+| info | Discans introduce itself and says Github page url to user see all commands available. | 
 | channel | Set the default channel to receive user alerts or server alerts. |
-| server-alert [link] | Creates an alert to @everyone when a new manga chapter be released in that Discord server. **Only an Admin can use that command.** | 
-| server-alert-remove [link] | Delete a server alert already registered to @everyone in that Discord server. **Only an Admin can use that command.** |
+| server-alert [url] | Creates an alert to @everyone when a new manga chapter be released in that Discord server. **Only an Admin can use that command.** | 
+| server-alert-remove [url] | Delete a server alert already registered to @everyone in that Discord server. **Only an Admin can use that command.** |
 | server-alert-remove-all | Remove manga's alerts in the Discord Server. It can be User Alerts or Server Alerts. **Only an Admin can use that command** and **has a confirmation message.** |
 | server-alert-list | List all alerts configurated to @everyone in this that Discord Server. | 
 | server-alert-list-all | ist all alerts configurated to @everyone and @users in this that Discord Server. | 
-| user-alert [link] [user(s)] | Create an alert to @user(s) when a new manga chapter be released. **Only an Admin can create alert to other users than not you.** | 
-| user-alert-remove [link] [user(s)] | Remove manga's alerts assigned to @user(s). **Only an Admin can remove alerts from other users than not you.** | 
+| user-alert [url] [user(s)] | Create an alert to @user(s) when a new manga chapter be released. **Only an Admin can create alert to other users than not you.** | 
+| user-alert-remove [url] [user(s)] | Remove manga's alerts assigned to @user(s). **Only an Admin can remove alerts from other users than not you.** | 
 | user-alert-remove [user(s)] | Removes all alerts assigned to @user(s). **Only an Admin can remove alerts from other users than not you.** |
 | user-alert-list | List all alerts configurated to @users in this that Discord Server. | 
-| private-alert [link] | Creates an alert to send you a Direct Message when a new manga chapter be released. |
-| private-alert-remove [link] | Remove manga's alerts assigned to the user in Direct Message. |
+| private-alert [url] | Creates an alert to send you a Direct Message when a new manga chapter be released. |
+| private-alert-remove [url] | Remove manga's alerts assigned to the user in Direct Message. |
 | private-alert-list | List all alerts configurated to send as Direct Message for that user. |
 
 ### Commands usage examples
@@ -40,6 +49,8 @@ discans private-alert https://www.mangaupdates.com/series.html?id=88
 discans private-alert-remove https://www.mangaupdates.com/series.html?id=88
 discans private-alert-list
 ```
+
+# For Developers
 
 ## Requirements & How to build
 
