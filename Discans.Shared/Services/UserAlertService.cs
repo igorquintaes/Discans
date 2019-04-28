@@ -12,18 +12,18 @@ namespace Discans.Shared.Services
     {
         private readonly AppDbContext dbContext;
 
-        public UserAlertService(AppDbContext context) => 
-            this.dbContext = context;
+        public UserAlertService(AppDbContext dbContext) => 
+            this.dbContext = dbContext;
 
-        public async Task<IList<UserAlert>> GerUserServerAlert(ulong serverId, ulong userId) => 
+        public async Task<IList<UserAlert>> GerUserServerAlerts(ulong serverId, ulong userId) => 
             await dbContext
                 .UserAlerts
                 .Include(x => x.Manga)
-                .Where(x => x.ServerId == serverId 
-                    && x.UserId == userId)
+                .Where(x => x.ServerId == serverId && 
+                            x.UserId == userId)
                 .ToListAsync();
 
-        public async Task<IList<UserAlert>> GetServerAlert(ulong serverId) => 
+        public async Task<IList<UserAlert>> GetServerAlerts(ulong serverId) => 
             await dbContext
                 .UserAlerts
                 .Include(x => x.Manga)
@@ -36,12 +36,15 @@ namespace Discans.Shared.Services
                 .UserAlerts
                 .Include(x => x.Manga)
                 .Where(x => x.ServerId == serverId &&
-                            x.Manga.Id == manga.Id &&
+                            x.Manga.MangaSiteId == manga.MangaSiteId &&
+                            x.Manga.MangaSite == manga.MangaSite &&
                             userIds.Contains(x.UserId))
                 .ToListAsync();
 
-            foreach (var userId in userIds.Where(x => !createdAlerts.Select(y => y.UserId).Contains(x)))
-                manga.UserAlerts.Add(new UserAlert(userId, serverId, manga));
+            userIds
+                .Where(x => !createdAlerts.Select(y => y.UserId).Contains(x))
+                .Select(x => new UserAlert(x, serverId, manga)).ToList()
+                .ForEach(manga.UserAlerts.Add);
 
             dbContext.Mangas.Update(manga);
         }        
@@ -53,47 +56,32 @@ namespace Discans.Shared.Services
                 .Where(x => x.ServerId == serverId)
                 .ToListAsync();
 
-            foreach (var alert in alerts)
-            {
-                dbContext.UserAlerts.Remove(alert);
-            }
+            dbContext.UserAlerts.RemoveRange(alerts);
         }
 
         public async Task Remove(ulong serverId, IEnumerable<ulong> userIds)
         {
             var alerts = await dbContext
                 .UserAlerts
-                .Where(x => x.ServerId == serverId
-                         && userIds.Contains(x.UserId))
+                .Where(x => x.ServerId == serverId && 
+                            userIds.Contains(x.UserId))
                 .ToListAsync();
 
-            foreach (var alert in alerts)
-            {
-                dbContext.UserAlerts.Remove(alert);
-            }
+            dbContext.UserAlerts.RemoveRange(alerts);
         }
 
-        public async Task Remove(ulong serverId, IEnumerable<ulong> userIds, int mangaId)
+        public async Task Remove(ulong serverId, IEnumerable<ulong> userIds, int mangaSiteId, MangaSite mangaSite)
         {
             var alerts = await dbContext
                 .UserAlerts
                 .Include(x => x.Manga)
-                .Where(x => x.ServerId == serverId
-                         && x.Manga.Id == mangaId
-                         && userIds.Contains(x.UserId))
+                .Where(x => x.ServerId == serverId &&
+                            x.Manga.MangaSiteId == mangaSiteId &&
+                            x.Manga.MangaSite == mangaSite &&
+                            userIds.Contains(x.UserId))
                 .ToListAsync();
 
-            foreach (var talertack in alerts)
-            {
-                dbContext.UserAlerts.Remove(talertack);
-            }
+            dbContext.UserAlerts.RemoveRange(alerts);
         }        
-    }
-
-    [Flags]
-    public enum AlertCreateStatus : short
-    {
-        Success = 0b01,
-        Error = 0b10
     }
 }

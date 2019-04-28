@@ -11,8 +11,8 @@ namespace Discans.Shared.Services
     {
         private readonly AppDbContext dbContext;
 
-        public ServerAlertService(AppDbContext context) => 
-            this.dbContext = context;
+        public ServerAlertService(AppDbContext dbContext) => 
+            this.dbContext = dbContext;
 
         public async Task<IList<ServerAlert>> Get(ulong serverId) => 
             await dbContext
@@ -26,29 +26,30 @@ namespace Discans.Shared.Services
             var serverAlert = await dbContext
                 .ServerAlerts
                 .Include(x => x.Manga)
-                .Where(x => x.ServerId == serverId
-                         && x.Manga.Id == manga.Id)
+                .Where(x => x.ServerId == serverId &&
+                            x.Manga.MangaSiteId == manga.MangaSiteId &&
+                            x.Manga.MangaSite == manga.MangaSite)
                 .FirstOrDefaultAsync();
 
-            if (serverAlert != null)
-                return;
-
-            serverAlert = new ServerAlert(serverId, manga);
-            manga.ServerAlerts.Add(serverAlert);
-
-            dbContext.Mangas.Update(manga);
+            if (serverAlert == null)
+            {
+                manga.ServerAlerts.Add(new ServerAlert(serverId, manga));
+                dbContext.Mangas.Update(manga);
+            }
         }
 
-        public async Task Remove(ulong serverId, int mangaId)
+        public async Task Remove(ulong serverId, int mangaSiteId, MangaSite mangaSite)
         {
             var alert = await dbContext
                 .ServerAlerts
                 .Include(x => x.Manga)
-                .Where(x => x.ServerId == serverId
-                         && x.Manga.Id == mangaId)
+                .Where(x => x.ServerId == serverId &&
+                            x.Manga.MangaSiteId == mangaSiteId &&
+                            x.Manga.MangaSite == mangaSite)
                 .FirstOrDefaultAsync();
 
-            dbContext.ServerAlerts.Remove(alert);
+            if (alert != null)
+                dbContext.ServerAlerts.Remove(alert);
         }
 
         public async Task Remove(ulong serverId)
@@ -59,10 +60,7 @@ namespace Discans.Shared.Services
                 .Where(x => x.ServerId == serverId)
                 .ToListAsync();
 
-            foreach (var alert in alerts)
-            {
-                dbContext.ServerAlerts.Remove(alert);
-            }
+            dbContext.ServerAlerts.RemoveRange(alerts);
         }
     }
 }

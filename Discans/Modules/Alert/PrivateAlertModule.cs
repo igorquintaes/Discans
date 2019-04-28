@@ -1,6 +1,6 @@
-﻿using Discans.DiscordServices;
-using Discans.Extensions;
+﻿using Discans.Extensions;
 using Discans.Shared.Database;
+using Discans.Shared.DiscordServices;
 using Discans.Shared.Services;
 using Discord.Commands;
 using System;
@@ -14,13 +14,13 @@ namespace Discans.Modules.Alert
     {
         private readonly MangaService mangaService;
         private readonly PrivateAlertService privateAlertService;
-        private readonly MangaUpdatesCrawlerService crawlerService;
+        private readonly CrawlerService crawlerService;
         private readonly AppDbContext dbContext;
 
         public PrivateAlertModule(
             MangaService mangaService,
             PrivateAlertService privateAlertService,
-            MangaUpdatesCrawlerService crawlerService,
+            CrawlerService crawlerService,
             AppDbContext dbContext)
         {
             this.mangaService = mangaService;
@@ -33,17 +33,17 @@ namespace Discans.Modules.Alert
         [RequireContext(ContextType.DM, ErrorMessage = "Só posso usar esse comando em privado >_>'")]
         public async Task UserAlert(string link)
         {
-            var isLinkValid = await crawlerService.LoadPageAsync(link);
+            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
             if (!isLinkValid)
             {
                 await ReplyAsync("Link inválido! T_T");
                 return;
             }
 
-            var mangaId = crawlerService.GetMangaId();
-            var mangaName = crawlerService.GetMangaName();
-            var lastRelease = crawlerService.LastRelease();
-            var manga = await mangaService.GetOrCreateIfNew(mangaId, lastRelease, mangaName);
+            var mangaId = mangaCrawlerService.GetMangaId();
+            var mangaName = mangaCrawlerService.GetMangaName();
+            var lastRelease = mangaCrawlerService.GetLastChapter();
+            var manga = await mangaService.GetOrCreateIfNew(mangaId, lastRelease, mangaName, mangaCrawlerService.MangaSite);
 
             await privateAlertService.Create(
                 userId: Context.User.Id,
@@ -60,6 +60,7 @@ namespace Discans.Modules.Alert
 ```ini
 Nome do mangá: [{mangaName}]
 Último capítulo lançado: [{lastRelease}]
+Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
 ```");
 
             await ReplyAsync(resposta.ToString());
@@ -69,15 +70,15 @@ Nome do mangá: [{mangaName}]
         [RequireContext(ContextType.DM, ErrorMessage = "Só posso usar esse comando em privado >_>'")]
         public async Task UserAlertRemove(string link)
         {
-            var isLinkValid = await crawlerService.LoadPageAsync(link);
+            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
             if (!isLinkValid)
             {
                 await ReplyAsync("Link inválido! T_T");
                 return;
             }
 
-            var mangaId = crawlerService.GetMangaId();
-            await privateAlertService.Remove(Context.User.Id, mangaId);
+            var mangaSiteId = mangaCrawlerService.GetMangaId();
+            await privateAlertService.Remove(Context.User.Id, mangaSiteId, mangaCrawlerService.MangaSite);
             await dbContext.SaveChangesAsync();
             await ReplyAsync("Os usuários foram desvinculados do projeto mencionado.");
         }
@@ -98,6 +99,7 @@ Nome do mangá: [{mangaName}]
 $@"```ini
 Mangá: [{x.Manga.Name}]
 Último lançamento: [{x.Manga.LastRelease}]
+Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
 ```");
 
             await ReplyAsync($@"Alertas configurados diretamente para você:");

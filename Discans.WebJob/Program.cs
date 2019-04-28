@@ -1,7 +1,7 @@
-﻿using Discans.DiscordServices;
-using Discans.Shared;
+﻿using Discans.Shared;
 using Discans.Shared.Database;
 using Discans.Shared.DiscordServices;
+using Discans.Shared.DiscordServices.CrawlerSites;
 using Discans.Shared.Services;
 using Discans.WebJob.Services;
 using Discord;
@@ -51,7 +51,9 @@ namespace Discans.WebJob
                 .AddSingleton<UserAlertService>()
                 .AddSingleton<PrivateAlertService>()
                 .AddSingleton<ServerAlertService>()
+                .AddSingleton<CrawlerService>()
                 .AddSingleton<MangaUpdatesCrawlerService>()
+                .AddSingleton<TuMangaCrawlerService>()
                 .AddSingleton<ChannelService>()
                 .AddDbContext<AppDbContext>(options => options.UseMySql(Helpers.EnvironmentVar(_config, "CONN")), ServiceLifetime.Singleton)
                 .BuildServiceProvider();
