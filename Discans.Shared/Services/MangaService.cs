@@ -21,21 +21,21 @@ namespace Discans.Shared.Services
                 .Include(x => x.UserAlerts)
                 .ToListAsync();
 
-        public async Task<Manga> GetOrCreateIfNew(int id, string lastRelease, string name)
+        public async Task<Manga> GetOrCreateIfNew(int mangaSiteId, string lastRelease, string name, MangaSite mangaSite)
         {
             var manga = await context.Mangas
                 .Include(x => x.ServerAlerts)
                 .Include(x => x.UserAlerts)
                 .Include(x => x.PrivateAlerts)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.MangaSiteId == mangaSiteId);
 
             if (manga != null)
                 return manga;
 
-            manga = new Manga(id, name, lastRelease);
+            manga = new Manga(mangaSiteId, name, lastRelease, mangaSite);
             context.Mangas.Add(manga);
-                await context.SaveChangesAsync();
-                return manga;
+            await context.SaveChangesAsync();
+            return manga;
         }
 
         public async Task<Manga> UpdateLastRelease(int id, string lastRelease)

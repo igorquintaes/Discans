@@ -1,6 +1,6 @@
-﻿using Discans.DiscordServices;
-using Discans.Extensions;
+﻿using Discans.Extensions;
 using Discans.Shared.Database;
+using Discans.Shared.DiscordServices;
 using Discans.Shared.Services;
 using Discord;
 using Discord.Commands;
@@ -15,13 +15,13 @@ namespace Discans.Modules.Alert
     {
         private readonly MangaService mangaService;
         private readonly UserAlertService userAlertService;
-        private readonly MangaUpdatesCrawlerService crawlerService;
+        private readonly CrawlerService crawlerService;
         private readonly AppDbContext dbContext;
 
         public UserAlertModule(
             MangaService mangaService,
             UserAlertService userAlertService,
-            MangaUpdatesCrawlerService crawlerService,
+            CrawlerService crawlerService,
             AppDbContext context)
         {
             this.mangaService = mangaService;
@@ -48,7 +48,7 @@ namespace Discans.Modules.Alert
                 return;
             }
 
-            var isLinkValid = await crawlerService.LoadPageAsync(link);
+            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
             if (!isLinkValid)
             {
                 await ReplyAsync("Link inválido! T_T");
@@ -56,10 +56,10 @@ namespace Discans.Modules.Alert
             }
 
             users = users.GroupBy(x => x.Id).Select(x => x.First()).ToArray();
-            var mangaId = crawlerService.GetMangaId();
-            var mangaName = crawlerService.GetMangaName();
-            var lastRelease = crawlerService.LastRelease();
-            var manga = await mangaService.GetOrCreateIfNew(mangaId, lastRelease, mangaName);
+            var mangaId = mangaCrawlerService.GetMangaId();
+            var mangaName = mangaCrawlerService.GetMangaName();
+            var lastRelease = mangaCrawlerService.GetLastChapter();
+            var manga = await mangaService.GetOrCreateIfNew(mangaId, lastRelease, mangaName, mangaCrawlerService.MangaSite);
 
             await userAlertService.Create(
                 userIds: users.Select(x => x.Id),
@@ -79,6 +79,7 @@ namespace Discans.Modules.Alert
 Nome do mangá: [{mangaName}]
 Quem será alertado: [{usersReplyMessage}]
 Último capítulo lançado: [{lastRelease}]
+Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
 ```");
 
             await ReplyAsync(resposta.ToString());
@@ -125,15 +126,16 @@ Quem será alertado: [{usersReplyMessage}]
                 return;
             }
 
-            var isLinkValid = await crawlerService.LoadPageAsync(link);
+            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
             if (!isLinkValid)
             {
                 await ReplyAsync("Link inválido! T_T");
                 return;
             }
 
-            var mangaId = crawlerService.GetMangaId();
-            await userAlertService.Remove(Context.Guild.Id, users.Select(x => x.Id), mangaId);
+            // todo: change mangaId
+            var mangaSiteId = mangaCrawlerService.GetMangaId();
+            await userAlertService.Remove(Context.Guild.Id, users.Select(x => x.Id), mangaSiteId, mangaCrawlerService.MangaSite);
             await dbContext.SaveChangesAsync();
             await ReplyAsync("Os usuários foram desvinculados do projeto mencionado.");
         }
@@ -142,7 +144,7 @@ Quem será alertado: [{usersReplyMessage}]
         [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
         public async Task AlertList(IGuildUser user)
         {
-            var alerts = await userAlertService.GerUserServerAlert(Context.Guild.Id, user.Id);
+            var alerts = await userAlertService.GerUserServerAlerts(Context.Guild.Id, user.Id);
 
             if (!alerts.Any())
             {
@@ -154,6 +156,7 @@ Quem será alertado: [{usersReplyMessage}]
 $@"```ini
 Mangá: [{x.Manga.Name}]
 Último lançamento: [{x.Manga.LastRelease}]
+Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
 ```");
 
             await ReplyAsync($@"Alertas configurados diretamente para o usuário {Context.Guild.GetUser(user.Id).Username}:");

@@ -9,9 +9,9 @@ using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using Discans.Shared.Database;
 using Discans.Shared.Services;
-using Discans.DiscordServices;
 using Discans.Shared.DiscordServices;
 using Discans.Shared;
+using Discans.Shared.DiscordServices.CrawlerSites;
 
 namespace Discans
 {
@@ -46,7 +46,9 @@ namespace Discans
                 .AddLogging()
                 .AddSingleton<LogService>()
                 .AddSingleton(_config)
+                .AddScoped<CrawlerService>()
                 .AddScoped<MangaUpdatesCrawlerService>()
+                .AddScoped<TuMangaCrawlerService>()
                 .AddScoped<MangaService>()
                 .AddScoped<PrivateAlertService>()
                 .AddScoped<UserAlertService>()

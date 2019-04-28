@@ -1,11 +1,10 @@
 ﻿using Discans.Attributes;
-using Discans.DiscordServices;
 using Discans.Extensions;
 using Discans.Shared.Database;
+using Discans.Shared.DiscordServices;
 using Discans.Shared.Services;
 using Discord.Commands;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,14 +16,14 @@ namespace Discans.Modules.Alert
         private readonly MangaService mangaService;
         private readonly ServerAlertService serverAlertService;
         private readonly UserAlertService userAlertService;
-        private readonly MangaUpdatesCrawlerService crawlerService;
+        private readonly CrawlerService crawlerService;
         private readonly AppDbContext dbContext;
 
         public ServerAlertModule(
             MangaService mangaService,
             ServerAlertService serverAlertService,
             UserAlertService userAlertService,
-            MangaUpdatesCrawlerService crawlerService,
+            CrawlerService crawlerService,
             AppDbContext dbContext)
         {
             this.mangaService = mangaService;
@@ -38,17 +37,17 @@ namespace Discans.Modules.Alert
         [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
         public async Task ServerAlert(string link)
         {
-            var isLinkValid = await crawlerService.LoadPageAsync(link);
+            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
             if (!isLinkValid)
             {
                 await ReplyAsync("Link inválido! T_T");
                 return;
             }
 
-            var mangaId = crawlerService.GetMangaId();
-            var mangaName = crawlerService.GetMangaName();
-            var lastRelease = crawlerService.LastRelease();
-            var manga = await mangaService.GetOrCreateIfNew(mangaId, lastRelease, mangaName);
+            var mangaId = mangaCrawlerService.GetMangaId();
+            var mangaName = mangaCrawlerService.GetMangaName();
+            var lastRelease = mangaCrawlerService.GetLastChapter();
+            var manga = await mangaService.GetOrCreateIfNew(mangaId, lastRelease, mangaName, mangaCrawlerService.MangaSite);
 
             await serverAlertService.Create(
                 serverId: Context.Guild.Id,
@@ -65,6 +64,7 @@ namespace Discans.Modules.Alert
 Nome do mangá: [{mangaName}]
 Quem será alertado: [Todos do servidor]
 Último capítulo lançado: [{lastRelease}]
+Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
 ```");
 
             await ReplyAsync(resposta.ToString());
@@ -74,15 +74,16 @@ Quem será alertado: [Todos do servidor]
         [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
         public async Task ServerAlertRemove(string link)
         {
-            var isLinkValid = await crawlerService.LoadPageAsync(link);
+            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
             if (!isLinkValid)
             {
                 await ReplyAsync("Link inválido! T_T");
                 return;
             }
 
-            var mangaId = crawlerService.GetMangaId();
-            await serverAlertService.Remove(Context.Guild.Id, mangaId);
+            // todo: change mangaID
+            var mangaSiteId = mangaCrawlerService.GetMangaId();
+            await serverAlertService.Remove(Context.Guild.Id, mangaSiteId, mangaCrawlerService.MangaSite);
             await dbContext.SaveChangesAsync();
             await ReplyAsync("O servidor foi desvinculado do projeto.");
         }
@@ -122,6 +123,7 @@ Quem será alertado: [Todos do servidor]
 $@"```ini
 Mangá: [{x.Manga.Name}]
 Último lançamento: [{x.Manga.LastRelease}]
+Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
 ```";
                 return text;
             });
@@ -138,7 +140,7 @@ Mangá: [{x.Manga.Name}]
         public async Task ServerAlertListAll()
         {
             var serverAlerts = await serverAlertService.Get(Context.Guild.Id);
-            var userAlerts = await userAlertService.GetServerAlert(Context.Guild.Id);
+            var userAlerts = await userAlertService.GetServerAlerts(Context.Guild.Id);
 
             if (!serverAlerts.Any() && !userAlerts.Any())
             {
@@ -152,6 +154,7 @@ $@"```ini
 Mangá: [{x.Manga.Name}]
 Quem será marcado: [todos de '{Context.Guild.Name}']
 Último lançamento: [{x.Manga.LastRelease}]
+Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
 ```";
                 return text;
             });
@@ -164,6 +167,7 @@ Quem será marcado: [{string.Join(", ",
                             x.Select(alert => Context.Guild.Users.FirstOrDefault(y => y.Id == alert.UserId)?.Username 
                             ?? "usuário que saiu do servidor"))}]
 Último lançamento: [{x.First().Manga.LastRelease}]
+Fonte de consulta: [{x.First().Manga.MangaSite.ToString()}]
 ```";
                 return text;
             });

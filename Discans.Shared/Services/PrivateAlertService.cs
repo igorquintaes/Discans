@@ -11,17 +11,18 @@ namespace Discans.Shared.Services
     {
         private readonly AppDbContext dbContext;
 
-        public PrivateAlertService(AppDbContext context) =>
-            dbContext = context;
+        public PrivateAlertService(AppDbContext dbContext) =>
+            this.dbContext = dbContext;
 
         public async Task Create(ulong userId, Manga manga)
         {
             var createdAlert = await dbContext
                 .PrivateAlerts
                 .Include(x => x.Manga)
-                .FirstOrDefaultAsync(x => 
+                .FirstOrDefaultAsync(x =>
                     x.UserId == userId &&
-                    x.Manga.Id == manga.Id);
+                    x.Manga.MangaSiteId == manga.MangaSiteId &&
+                    x.Manga.MangaSite == manga.MangaSite);
 
             if (createdAlert == null)
             {
@@ -30,14 +31,15 @@ namespace Discans.Shared.Services
             }
         }
 
-        public async Task Remove(ulong userId, int mangaId)
+        public async Task Remove(ulong userId, int mangaSiteId, MangaSite mangaSite)
         {
             var alert = await dbContext
                 .PrivateAlerts
                 .Include(x => x.Manga)
                 .FirstOrDefaultAsync(x => 
                     x.UserId == userId && 
-                    x.Manga.Id == mangaId);
+                    x.Manga.MangaSiteId == mangaSiteId &&
+                    x.Manga.MangaSite == mangaSite);
 
             if (alert != null)
                 dbContext.PrivateAlerts.Remove(alert);
