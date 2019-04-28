@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using Discans.Shared.Services;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -10,24 +13,30 @@ namespace Discans
 {
     public class CommandHandling
     {
-        private readonly DiscordSocketClient _discord;
-        private readonly CommandService _commands;
-        private IServiceProvider _provider;
+        private readonly DiscordSocketClient discord;
+        private readonly CommandService commands;
+        private readonly LanguageService languageService;
+        private IServiceProvider provider;
 
-        public CommandHandling(IServiceProvider provider, DiscordSocketClient discord, CommandService commands)
+        public CommandHandling(
+            IServiceProvider provider, 
+            DiscordSocketClient discord, 
+            CommandService commands, 
+            LanguageService languageService)
         {
-            _discord = discord;
-            _commands = commands;
-            _provider = provider;
+            this.discord = discord;
+            this.commands = commands;
+            this.languageService = languageService;
+            this.provider = provider;
 
-            _discord.SetGameAsync($"{Consts.BotCommand}info", "https://github.com/igorquintaes/Discans");
-            _discord.MessageReceived += MessageReceived;
+            this.discord.SetGameAsync($"{Consts.BotCommand}info", "https://github.com/igorquintaes/Discans");
+            this.discord.MessageReceived += MessageReceived;
         }
 
         public async Task InitializeAsync(IServiceProvider provider)
         {
-            _provider = provider;
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
+            this.provider = provider;
+            await commands.AddModulesAsync(Assembly.GetEntryAssembly(), this.provider);
         }
 
         private async Task MessageReceived(SocketMessage rawMessage)
@@ -38,14 +47,19 @@ namespace Discans
             int argPos = 0;
             if (!message.HasStringPrefix(Consts.BotCommand, ref argPos)) return;
 
-            using (var scope = _provider.CreateScope())
+            using (var scope = provider.CreateScope())
             {
-                var context = new SocketCommandContext(_discord, message);
-                var result = await _commands.ExecuteAsync(context, argPos, scope.ServiceProvider);
+                var context = new SocketCommandContext(discord, message);
+                var language = context.Channel is IGuildChannel 
+                    ? languageService.GetServerLanguage(context.Guild.Id)
+                    : languageService.GetUserLanguage(context.User.Id);
+
+                Thread.CurrentThread.CurrentCulture = new CultureInfo(language);
+                var result = await commands.ExecuteAsync(context, argPos, scope.ServiceProvider);
                     
                 if (result.Error.HasValue &&
                     result.Error.Value != CommandError.UnknownCommand)
-                    await context.Channel.SendMessageAsync($"Pera, tô confusa...! {result.ErrorReason}");
+                    await context.Channel.SendMessageAsync(result.ErrorReason);
             }
         }
     }

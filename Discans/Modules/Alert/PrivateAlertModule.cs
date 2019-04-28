@@ -1,4 +1,6 @@
 ﻿using Discans.Extensions;
+﻿using Discans.Attributes;
+using Discans.Resources.Attributes;
 using Discans.Shared.Database;
 using Discans.Shared.DiscordServices;
 using Discans.Shared.Services;
@@ -29,8 +31,9 @@ namespace Discans.Modules.Alert
             this.dbContext = dbContext;
         }
 
+        // TODO: change resource
         [Command("private-alert")]
-        [RequireContext(ContextType.DM, ErrorMessage = "Só posso usar esse comando em privado >_>'")]
+        [LocaledRequireContext(ContextType.DM, typeof(LocaledRequireContextAttributeResource))]
         public async Task UserAlert(string link)
         {
             var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
@@ -67,7 +70,7 @@ Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
         }
 
         [Command("private-alert-remove")]
-        [RequireContext(ContextType.DM, ErrorMessage = "Só posso usar esse comando em privado >_>'")]
+        [LocaledRequireContext(ContextType.DM, typeof(LocaledRequireContextAttributeResource))]
         public async Task UserAlertRemove(string link)
         {
             var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
@@ -84,7 +87,7 @@ Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
         }
                
         [Command("private-alert-list")]
-        [RequireContext(ContextType.DM, ErrorMessage = "Só posso usar esse comando em privado >_>'")]
+        [LocaledRequireContext(ContextType.DM, typeof(LocaledRequireContextAttributeResource))]
         public async Task AlertList()
         {
             var alerts = await privateAlertService.GetAlerts(Context.User.Id);

@@ -45,6 +45,7 @@ namespace Discans
                 .AddSingleton<CommandHandling>()
                 .AddLogging()
                 .AddSingleton<LogService>()
+                .AddSingleton<LanguageService>()
                 .AddSingleton(_config)
                 .AddScoped<CrawlerService>()
                 .AddScoped<MangaUpdatesCrawlerService>()
@@ -54,6 +55,8 @@ namespace Discans
                 .AddScoped<UserAlertService>()
                 .AddScoped<ServerAlertService>()
                 .AddScoped<ChannelService>()
+                .AddScoped<UserLocalizerService>()
+                .AddScoped<ServerLocalizerService>()
                 .AddDbContext<AppDbContext>(options => options.UseMySql(Helpers.EnvironmentVar(_config, "CONN")))
                 .BuildServiceProvider();
 
