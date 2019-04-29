@@ -1,6 +1,6 @@
 ﻿using Discans.Shared.Models;
+using Discans.Shared.ViewModels;
 using HtmlAgilityPack;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,10 +15,10 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
         internal void SetDocument(HtmlDocument document) =>
             this.document = document;
 
-        public IEnumerable<Manga> LastMangaReleases()
+        public IEnumerable<MangaRelease> LastMangaReleases()
         {
             var document = new HtmlWeb().Load("https://www.mangaupdates.com/releases.html");
-            var mangas = new List<Manga>();
+            var mangas = new List<MangaRelease>();
             var tables = document.DocumentNode.SelectNodes("//*[@id='main_content']//div[@class='alt p-1']//div[@class='row no-gutters']");
 
             foreach (var table in tables)
@@ -26,12 +26,11 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
                 var releasesCount = table.SelectNodes("div[@class='col-6 pbreak']/a/..").Count;
                 for (var count = 1; count <= releasesCount; count++)
                 {
-                    mangas.Add(new Manga(
-                        mangaSiteId: Convert.ToInt32(table.SelectSingleNode($"(div[@class='col-6 pbreak']/a)[{count}]")
+                    mangas.Add(new MangaRelease(
+                        mangaSiteId: table.SelectSingleNode($"(div[@class='col-6 pbreak']/a)[{count}]")
                             .GetAttributeValue("href", "")
-                            .Split("id=")
-                            .Last()
-                            .Trim()),
+                            .Split("id=").Last()
+                            .Trim(),
                         name: default,
                         lastRelease: HtmlEntity.DeEntitize(table
                             .SelectSingleNode($"((div[@class='col-6 pbreak']/a/..)[{count}]/following-sibling::div)[1]")
@@ -43,14 +42,14 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
             return mangas;
         }
 
-        public int GetMangaId() => 
-            int.Parse(document.DocumentNode
+        public string GetMangaId() => 
+            document.DocumentNode
                 .SelectNodes("//*[contains(@href, 'stats.html?period=week&amp;series=')]")
                 .Single()
                 .GetAttributeValue("href", null)
                 .Replace("stats.html?period=week&amp;series=", "§")
                 .Split('§')
-                .Last());
+                .Last();
 
         public string GetMangaName() =>
             HtmlEntity.DeEntitize(document.DocumentNode

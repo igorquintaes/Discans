@@ -3,14 +3,16 @@ using System;
 using Discans.Shared.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Discans.Shared.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190429002548_ChangeMangaIdType")]
+    partial class ChangeMangaIdType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,20 +81,6 @@ namespace Discans.Shared.Migrations
                     b.ToTable("ServerChannels");
                 });
 
-            modelBuilder.Entity("Discans.Shared.Models.ServerLocalizer", b =>
-                {
-                    b.Property<ulong>("ServerId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(5);
-
-                    b.HasKey("ServerId");
-
-                    b.ToTable("ServerLocalizer");
-                });
-
             modelBuilder.Entity("Discans.Shared.Models.UserAlert", b =>
                 {
                     b.Property<int>("Id")
@@ -109,20 +97,6 @@ namespace Discans.Shared.Migrations
                     b.HasIndex("MangaId");
 
                     b.ToTable("UserAlerts");
-                });
-
-            modelBuilder.Entity("Discans.Shared.Models.UserLocalizer", b =>
-                {
-                    b.Property<ulong>("UserId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(5);
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("UserLocalizer");
                 });
 
             modelBuilder.Entity("Discans.Shared.Models.PrivateAlert", b =>

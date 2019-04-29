@@ -9,15 +9,18 @@ namespace Discans.Shared.DiscordServices
     {
         private readonly MangaUpdatesCrawlerService mangaUpdates;
         private readonly TuMangaCrawlerService tuManga;
+        private readonly UnionMangasCrawlerService unionMangas;
 
         public IMangaSiteCrawlerService SiteCrawler { get; private set; }
 
         public CrawlerService(
             MangaUpdatesCrawlerService mangaUpdates, 
-            TuMangaCrawlerService tuManga)
+            TuMangaCrawlerService tuManga,
+            UnionMangasCrawlerService unionMangas)
         {
             this.mangaUpdates = mangaUpdates;
             this.tuManga = tuManga;
+            this.unionMangas = unionMangas;
         }
 
         public async Task<bool> LoadPageAsync(string link)
@@ -37,6 +40,7 @@ namespace Discans.Shared.DiscordServices
                     mangaUpdates.SetDocument(mangaUpdatesDocument);
                     SiteCrawler = mangaUpdates;
                     return true;
+
                 case "tmofans.com":
                     var tuMangaDocument = await new HtmlWeb().LoadFromWebAsync(uri.AbsoluteUri);
                     var tuMangaNodes = tuMangaDocument.DocumentNode.SelectNodes("//div[@id='app']//div[@class='card chapters']");
@@ -46,6 +50,17 @@ namespace Discans.Shared.DiscordServices
                     tuManga.SetDocument(tuMangaDocument);
                     SiteCrawler = tuManga;
                     return true;
+
+                case "unionmangas.top":
+                    var unionMangasDocument = await new HtmlWeb().LoadFromWebAsync(uri.AbsoluteUri);
+                    var unionMangasNodes = unionMangasDocument.DocumentNode.SelectNodes("//div[@class='row lancamento-linha']");
+                    if (unionMangasNodes?.Count == 0)
+                        return false;
+
+                    unionMangas.SetDocument(unionMangasDocument);
+                    SiteCrawler = unionMangas;
+                    return true;
+
                 default:
                     return false;
             }

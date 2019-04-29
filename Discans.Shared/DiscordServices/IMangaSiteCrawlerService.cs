@@ -1,4 +1,5 @@
 ﻿using Discans.Shared.Models;
+using Discans.Shared.ViewModels;
 using System.Collections.Generic;
 
 namespace Discans.Shared.DiscordServices
@@ -7,9 +8,9 @@ namespace Discans.Shared.DiscordServices
     {
         MangaSite MangaSite { get; }
 
-        IEnumerable<Manga> LastMangaReleases();
+        IEnumerable<MangaRelease> LastMangaReleases();
         string GetLastChapter();
         string GetMangaName();
-        int GetMangaId();
+        string GetMangaId();
     }
 }

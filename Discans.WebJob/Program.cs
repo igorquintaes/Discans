@@ -51,6 +51,7 @@ namespace Discans.WebJob
                 .AddSingleton<UserAlertService>()
                 .AddSingleton<PrivateAlertService>()
                 .AddSingleton<ServerAlertService>()
+                .AddSingleton<UnionMangasCrawlerService>()
                 .AddSingleton<CrawlerService>()
                 .AddSingleton<MangaUpdatesCrawlerService>()
                 .AddSingleton<TuMangaCrawlerService>()

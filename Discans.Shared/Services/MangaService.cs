@@ -21,7 +21,7 @@ namespace Discans.Shared.Services
                 .Include(x => x.UserAlerts)
                 .ToListAsync();
 
-        public async Task<Manga> GetOrCreateIfNew(int mangaSiteId, string lastRelease, string name, MangaSite mangaSite)
+        public async Task<Manga> GetOrCreateIfNew(string mangaSiteId, string lastRelease, string name, MangaSite mangaSite)
         {
             var manga = await context.Mangas
                 .Include(x => x.ServerAlerts)

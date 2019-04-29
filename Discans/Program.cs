@@ -55,6 +55,7 @@ namespace Discans
             .AddScoped<CrawlerService>()
             .AddScoped<MangaUpdatesCrawlerService>()
             .AddScoped<TuMangaCrawlerService>()
+            .AddScoped<UnionMangasCrawlerService>()
             .AddScoped<MangaService>()
             .AddScoped<PrivateAlertService>()
             .AddScoped<UserAlertService>()

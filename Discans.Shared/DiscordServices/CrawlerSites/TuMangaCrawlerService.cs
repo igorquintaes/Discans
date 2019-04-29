@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Discans.Shared.Models;
+using Discans.Shared.ViewModels;
 using HtmlAgilityPack;
 
 namespace Discans.Shared.DiscordServices.CrawlerSites
@@ -22,11 +22,11 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
             .Trim().Replace(':', ' ')
             .Split(' ')[1];
 
-        public int GetMangaId() => Convert.ToInt32(
+        public string GetMangaId() =>
             document.DocumentNode
                 .SelectSingleNode("//a[contains(@href, 'https://tmofans.com/uploads/')]")
                 .GetAttributeValue("href", null)
-                .Split('/').Last());
+                .Split('/').Last();
 
         public string GetMangaName() => HtmlEntity.DeEntitize(
             document.DocumentNode
@@ -34,18 +34,17 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
                 .InnerText)
             .Trim();
 
-        public IEnumerable<Manga> LastMangaReleases()
+        public IEnumerable<MangaRelease> LastMangaReleases()
         {
             var document = new HtmlWeb().Load("https://tmofans.com/?uploads_mode=list");
-            var mangas = new List<Manga>();
+            var mangas = new List<MangaRelease>();
             foreach (var release in document.DocumentNode.SelectNodes("//*[@id='latest_uploads']/..//tbody/tr"))
             {
-                mangas.Add(new Manga(
-                    mangaSiteId: Convert.ToInt32(release.SelectSingleNode("td[2]/a")
+                mangas.Add(new MangaRelease(
+                    mangaSiteId: release.SelectSingleNode("td[2]/a")
                         .GetAttributeValue("href", "")
-                        .Split('/')
-                        .Last()
-                        .Trim()),
+                        .Split('/').Last()
+                        .Trim(),
                     name: default,
                     lastRelease: HtmlEntity.DeEntitize(release.SelectSingleNode("td[3]/a")
                         .InnerText.Trim()),

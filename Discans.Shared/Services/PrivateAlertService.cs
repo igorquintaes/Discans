@@ -31,7 +31,7 @@ namespace Discans.Shared.Services
             }
         }
 
-        public async Task Remove(ulong userId, int mangaSiteId, MangaSite mangaSite)
+        public async Task Remove(ulong userId, string mangaSiteId, MangaSite mangaSite)
         {
             var alert = await dbContext
                 .PrivateAlerts

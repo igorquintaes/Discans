@@ -4,6 +4,7 @@ Discord bot to notify when manga chapter is released in english, based on online
 ## Compatible Websites
 - MangaUpdates (url example: https://www.mangaupdates.com/series.html?id=88)
 - TuMangas (url example: https://tmofans.com/library/manga/8399/Berserk)
+- MangaUpdates (url example: https://unionmangas.top/manga/berserk)
 
 ## How to Use discans in your server
 - Invite Discans [using this url](https://discordapp.com/api/oauth2/authorize?client_id=556213286383648769&permissions=154624&scope=bot), or create and deploy your own version of the bot;
