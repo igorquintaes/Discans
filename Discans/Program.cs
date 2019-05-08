@@ -12,6 +12,9 @@ using Discans.Shared.Services;
 using Discans.Shared.DiscordServices;
 using Discans.Shared;
 using Discans.Shared.DiscordServices.CrawlerSites;
+using System.Reflection;
+using System.Linq;
+using Discans.Resources;
 
 namespace Discans
 {
@@ -42,27 +45,27 @@ namespace Discans
             await Task.Delay(-1);
         }
 
-        private IServiceProvider ConfigureServices(DiscordSocketClient client) => 
-            new ServiceCollection()
-                .AddSingleton(client)
-                .AddSingleton<CommandService>()
-                .AddSingleton<CommandHandling>()
-                .AddLogging()
-                .AddSingleton<LogService>()
-                .AddSingleton<LanguageService>()
-                .AddSingleton(_config)
-                .AddScoped<CrawlerService>()
-                .AddScoped<MangaUpdatesCrawlerService>()
-                .AddScoped<TuMangaCrawlerService>()
-                .AddScoped<MangaService>()
-                .AddScoped<PrivateAlertService>()
-                .AddScoped<UserAlertService>()
-                .AddScoped<ServerAlertService>()
-                .AddScoped<ChannelService>()
-                .AddScoped<UserLocalizerService>()
-                .AddScoped<ServerLocalizerService>()
-                .AddDbContext<AppDbContext>(options => options.UseMySql(Helpers.EnvironmentVar(_config, "CONN")))
-                .BuildServiceProvider();
+        private IServiceProvider ConfigureServices(DiscordSocketClient client) => new ServiceCollection()
+            .AddSingleton(client)
+            .AddSingleton<CommandService>()
+            .AddSingleton<CommandHandling>()
+            .AddLogging()
+            .AddSingleton<LogService>()
+            .AddSingleton<LanguageService>()
+            .AddSingleton(typeof(LocaledResourceManager<>))
+            .AddSingleton(_config)
+            .AddScoped<CrawlerService>()
+            .AddScoped<MangaUpdatesCrawlerService>()
+            .AddScoped<TuMangaCrawlerService>()
+            .AddScoped<MangaService>()
+            .AddScoped<PrivateAlertService>()
+            .AddScoped<UserAlertService>()
+            .AddScoped<ServerAlertService>()
+            .AddScoped<ChannelService>()
+            .AddScoped<UserLocalizerService>()
+            .AddScoped<ServerLocalizerService>()
+            .AddDbContext<AppDbContext>(options => options.UseMySql(Helpers.EnvironmentVar(_config, "CONN")))
+            .BuildServiceProvider();
 
         private IConfiguration BuildConfig() =>
             new ConfigurationBuilder()

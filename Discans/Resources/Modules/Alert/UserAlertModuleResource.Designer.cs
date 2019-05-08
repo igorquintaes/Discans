@@ -22,7 +22,7 @@ namespace Discans.Resources.Modules.Alert {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class UserAlertModuleResource {
+    public class UserAlertModuleResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Discans.Resources.Modules.Alert {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Discans.Resources.Modules.Alert.UserAlertModuleResource", typeof(UserAlertModuleResource).Assembly);
@@ -51,7 +51,7 @@ namespace Discans.Resources.Modules.Alert {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to Sorry, but only an Admin can manage alerts for someone else. If you want, you can manage an alert for yourself :).
         /// </summary>
-        internal static string OnlyAdminAlertSomeoneElse {
+        public static string OnlyAdminAlertSomeoneElse {
             get {
                 return ResourceManager.GetString("OnlyAdminAlertSomeoneElse", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to Bellow, all configurated alerts to this user:.
         /// </summary>
-        internal static string UserAlertListHeader {
+        public static string UserAlertListHeader {
             get {
                 return ResourceManager.GetString("UserAlertListHeader", resourceCulture);
             }
@@ -85,7 +85,7 @@ namespace Discans.Resources.Modules.Alert {
         ///Based on: [{2}]
         ///```.
         /// </summary>
-        internal static string UserAlertListMessageItem {
+        public static string UserAlertListMessageItem {
             get {
                 return ResourceManager.GetString("UserAlertListMessageItem", resourceCulture);
             }
@@ -94,7 +94,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to The mentioned users was removed from all alerts..
         /// </summary>
-        internal static string UserAlertRemoveAllSuccess {
+        public static string UserAlertRemoveAllSuccess {
             get {
                 return ResourceManager.GetString("UserAlertRemoveAllSuccess", resourceCulture);
             }
@@ -103,7 +103,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to The mentioned users was removed from the alert..
         /// </summary>
-        internal static string UserAlertRemoveSuccess {
+        public static string UserAlertRemoveSuccess {
             get {
                 return ResourceManager.GetString("UserAlertRemoveSuccess", resourceCulture);
             }
@@ -121,7 +121,7 @@ namespace Discans.Resources.Modules.Alert {
         ///Based on: [{4}]
         ///```.
         /// </summary>
-        internal static string UserAlertSuccess {
+        public static string UserAlertSuccess {
             get {
                 return ResourceManager.GetString("UserAlertSuccess", resourceCulture);
             }
@@ -130,7 +130,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to This user has no alerts :/.
         /// </summary>
-        internal static string UserHasNoAlerts {
+        public static string UserHasNoAlerts {
             get {
                 return ResourceManager.GetString("UserHasNoAlerts", resourceCulture);
             }
@@ -139,7 +139,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to User not found :(.
         /// </summary>
-        internal static string UserNotFound {
+        public static string UserNotFound {
             get {
                 return ResourceManager.GetString("UserNotFound", resourceCulture);
             }

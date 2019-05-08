@@ -22,7 +22,7 @@ namespace Discans.Resources.Modules.Alert {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ServerAlertModuleResource {
+    public class ServerAlertModuleResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Discans.Resources.Modules.Alert {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Discans.Resources.Modules.Alert.ServerAlertModuleResource", typeof(ServerAlertModuleResource).Assembly);
@@ -51,7 +51,7 @@ namespace Discans.Resources.Modules.Alert {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to There is no server alert or user alert here :/.
         /// </summary>
-        internal static string ServerAlertListAllEmpty {
+        public static string ServerAlertListAllEmpty {
             get {
                 return ResourceManager.GetString("ServerAlertListAllEmpty", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to Here all alerts for this server:.
         /// </summary>
-        internal static string ServerAlertListAllMessageHeader {
+        public static string ServerAlertListAllMessageHeader {
             get {
                 return ResourceManager.GetString("ServerAlertListAllMessageHeader", resourceCulture);
             }
@@ -86,7 +86,7 @@ namespace Discans.Resources.Modules.Alert {
         ///Based on: [{3}]
         ///```.
         /// </summary>
-        internal static string ServerAlertListAllMessageItem {
+        public static string ServerAlertListAllMessageItem {
             get {
                 return ResourceManager.GetString("ServerAlertListAllMessageItem", resourceCulture);
             }
@@ -95,7 +95,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to I have no server alert here :(.
         /// </summary>
-        internal static string ServerAlertListEmpty {
+        public static string ServerAlertListEmpty {
             get {
                 return ResourceManager.GetString("ServerAlertListEmpty", resourceCulture);
             }
@@ -104,7 +104,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to Configurated alerts directly for this server mention:.
         /// </summary>
-        internal static string ServerAlertListMessageHeader {
+        public static string ServerAlertListMessageHeader {
             get {
                 return ResourceManager.GetString("ServerAlertListMessageHeader", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Discans.Resources.Modules.Alert {
         ///Based on: [{2}]
         ///```.
         /// </summary>
-        internal static string ServerAlertListMessageItem {
+        public static string ServerAlertListMessageItem {
             get {
                 return ResourceManager.GetString("ServerAlertListMessageItem", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to All project and user alers will no more be sent in this server. I will miss you :´(.
         /// </summary>
-        internal static string ServerAlertRemoveAllConfirmSuccess {
+        public static string ServerAlertRemoveAllConfirmSuccess {
             get {
                 return ResourceManager.GetString("ServerAlertRemoveAllConfirmSuccess", resourceCulture);
             }
@@ -137,7 +137,7 @@ namespace Discans.Resources.Modules.Alert {
         ///
         ///If you are, type `{0}`..
         /// </summary>
-        internal static string ServerAlertRemoveAllMessage {
+        public static string ServerAlertRemoveAllMessage {
             get {
                 return ResourceManager.GetString("ServerAlertRemoveAllMessage", resourceCulture);
             }
@@ -146,7 +146,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to The server will no more be alerted about that release..
         /// </summary>
-        internal static string ServerAlertRemoveSuccess {
+        public static string ServerAlertRemoveSuccess {
             get {
                 return ResourceManager.GetString("ServerAlertRemoveSuccess", resourceCulture);
             }
@@ -164,7 +164,7 @@ namespace Discans.Resources.Modules.Alert {
         ///Based on: [{2}]
         ///```.
         /// </summary>
-        internal static string ServerAlertSuccess {
+        public static string ServerAlertSuccess {
             get {
                 return ResourceManager.GetString("ServerAlertSuccess", resourceCulture);
             }

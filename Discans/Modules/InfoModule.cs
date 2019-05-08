@@ -7,13 +7,11 @@ namespace Discans.Modules
 {
     public class InfoModule : ModuleBase<SocketCommandContext>
     {
-        private static LocaledResourceManager resourceManager;
+        private readonly LocaledResourceManager<InfoModuleResource> resourceManager;
         public const string InfoCommand = "info";
 
-        public InfoModule() => 
-            resourceManager = resourceManager
-                ?? new LocaledResourceManager(typeof(InfoModuleResource).FullName,
-                                              typeof(InfoModuleResource).Assembly);
+        public InfoModule(LocaledResourceManager<InfoModuleResource> resourceManager) =>
+            this.resourceManager = resourceManager;
 
         [Command(InfoCommand)]
         public Task Info() => 

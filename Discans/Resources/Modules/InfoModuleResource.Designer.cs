@@ -22,7 +22,7 @@ namespace Discans.Resources.Modules {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class InfoModuleResource {
+    public class InfoModuleResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Discans.Resources.Modules {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Discans.Resources.Modules.InfoModuleResource", typeof(InfoModuleResource).Assembly);
@@ -51,7 +51,7 @@ namespace Discans.Resources.Modules {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -67,7 +67,7 @@ namespace Discans.Resources.Modules {
         ///You can check all my commands, how to use, supported websites and my source code in the bellow GitHub link:
         ///https://github.com/igorquintaes/Discans.
         /// </summary>
-        internal static string InfoMessage {
+        public static string InfoMessage {
             get {
                 return ResourceManager.GetString("InfoMessage", resourceCulture);
             }

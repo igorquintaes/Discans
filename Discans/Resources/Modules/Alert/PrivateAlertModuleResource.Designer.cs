@@ -22,7 +22,7 @@ namespace Discans.Resources.Modules.Alert {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class PrivateAlertModuleResource {
+    public class PrivateAlertModuleResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Discans.Resources.Modules.Alert {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Discans.Resources.Modules.Alert.PrivateAlertModuleResource", typeof(PrivateAlertModuleResource).Assembly);
@@ -51,7 +51,7 @@ namespace Discans.Resources.Modules.Alert {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -67,7 +67,7 @@ namespace Discans.Resources.Modules.Alert {
         ///Based on: [{2}]
         ///```.
         /// </summary>
-        internal static string AlertListChunck {
+        public static string AlertListChunck {
             get {
                 return ResourceManager.GetString("AlertListChunck", resourceCulture);
             }
@@ -76,7 +76,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to You alerts:.
         /// </summary>
-        internal static string AlertListTitle {
+        public static string AlertListTitle {
             get {
                 return ResourceManager.GetString("AlertListTitle", resourceCulture);
             }
@@ -85,7 +85,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to You have no alerts :(.
         /// </summary>
-        internal static string NoAlerts {
+        public static string NoAlerts {
             get {
                 return ResourceManager.GetString("NoAlerts", resourceCulture);
             }
@@ -94,7 +94,7 @@ namespace Discans.Resources.Modules.Alert {
         /// <summary>
         ///   Looks up a localized string similar to You will stop to receive notifications of that manga..
         /// </summary>
-        internal static string UserAlertRemove {
+        public static string UserAlertRemove {
             get {
                 return ResourceManager.GetString("UserAlertRemove", resourceCulture);
             }
@@ -111,7 +111,7 @@ namespace Discans.Resources.Modules.Alert {
         ///Based on: [{3}]
         ///```.
         /// </summary>
-        internal static string UserAlertSuccess {
+        public static string UserAlertSuccess {
             get {
                 return ResourceManager.GetString("UserAlertSuccess", resourceCulture);
             }

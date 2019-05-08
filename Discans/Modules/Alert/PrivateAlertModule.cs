@@ -1,6 +1,5 @@
 ﻿using Discans.Extensions;
-﻿using Discans.Attributes;
-using Discans.Resources;
+using Discans.Attributes;
 using Discans.Resources.Modules.Alert;
 using Discans.Shared.Database;
 using Discans.Shared.DiscordServices;
@@ -9,6 +8,7 @@ using Discord.Commands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Discans.Resources;
 
 namespace Discans.Modules.Alert
 {
@@ -18,7 +18,7 @@ namespace Discans.Modules.Alert
         private readonly PrivateAlertService privateAlertService;
         private readonly CrawlerService crawlerService;
         private readonly AppDbContext dbContext;
-        private static LocaledResourceManager resourceManager;
+        private readonly LocaledResourceManager<PrivateAlertModuleResource> resourceManager;
 
         public const string AlertCommand = "private-alert";
         public const string AlertRemoveCommand = "private-alert-remove";
@@ -28,15 +28,14 @@ namespace Discans.Modules.Alert
             MangaService mangaService,
             PrivateAlertService privateAlertService,
             CrawlerService crawlerService,
-            AppDbContext dbContext)
+            AppDbContext dbContext,
+            LocaledResourceManager<PrivateAlertModuleResource> resourceManager)
         {
             this.mangaService = mangaService;
             this.privateAlertService = privateAlertService;
             this.crawlerService = crawlerService;
             this.dbContext = dbContext;
-            resourceManager = resourceManager
-                ?? new LocaledResourceManager(typeof(PrivateAlertModuleResource).FullName, 
-                                              typeof(PrivateAlertModuleResource).Assembly);
+            this.resourceManager = resourceManager;
         }
         
         [Command(AlertCommand), ValidLink]

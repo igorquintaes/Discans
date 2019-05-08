@@ -19,7 +19,7 @@ namespace Discans.Modules.Alert
         private readonly UserAlertService userAlertService;
         private readonly CrawlerService crawlerService;
         private readonly AppDbContext dbContext;
-        private static LocaledResourceManager resourceManager;
+        private readonly LocaledResourceManager<UserAlertModuleResource> resourceManager;
 
         public const string AlertCommand = "user-alert";
         public const string AlertRemoveCommand = "user-alert-remove";
@@ -29,16 +29,14 @@ namespace Discans.Modules.Alert
             MangaService mangaService,
             UserAlertService userAlertService,
             CrawlerService crawlerService,
-            AppDbContext context)
+            AppDbContext context,
+            LocaledResourceManager<UserAlertModuleResource> resourceManager)
         {
             this.mangaService = mangaService;
             this.userAlertService = userAlertService;
             this.crawlerService = crawlerService;
-            dbContext = context;
-
-            resourceManager = resourceManager
-                ?? new LocaledResourceManager(typeof(UserAlertModuleResource).FullName,
-                                              typeof(UserAlertModuleResource).Assembly);
+            this.dbContext = context;
+            this.resourceManager = resourceManager;
         }
 
         [Command(AlertCommand), ValidLink]

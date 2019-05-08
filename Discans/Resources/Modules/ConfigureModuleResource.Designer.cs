@@ -22,7 +22,7 @@ namespace Discans.Resources.Modules {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ConfigureModuleResource {
+    public class ConfigureModuleResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Discans.Resources.Modules {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Discans.Resources.Modules.ConfigureModuleResource", typeof(ConfigureModuleResource).Assembly);
@@ -51,7 +51,7 @@ namespace Discans.Resources.Modules {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Discans.Resources.Modules {
         /// <summary>
         ///   Looks up a localized string similar to Ok, i will start to send all notifications here!.
         /// </summary>
-        internal static string ChannelSuccess {
+        public static string ChannelSuccess {
             get {
                 return ResourceManager.GetString("ChannelSuccess", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Discans.Resources.Modules {
         /// <summary>
         ///   Looks up a localized string similar to We does not support that language :(.
         /// </summary>
-        internal static string LanguageUnsupported {
+        public static string LanguageUnsupported {
             get {
                 return ResourceManager.GetString("LanguageUnsupported", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Discans.Resources.Modules {
         /// <summary>
         ///   Looks up a localized string similar to Your language has been updated!.
         /// </summary>
-        internal static string LanguageUpdated {
+        public static string LanguageUpdated {
             get {
                 return ResourceManager.GetString("LanguageUpdated", resourceCulture);
             }

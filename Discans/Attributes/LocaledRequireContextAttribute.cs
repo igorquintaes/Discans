@@ -12,16 +12,15 @@ namespace Discans.Attributes
     {
         public Type ResourceType { get; set; }
 
-        private static LocaledResourceManager resourceManager;
-
         public LocaledRequireContextAttribute(ContextType contexts)
-            : base(contexts) => 
-                resourceManager = resourceManager 
-                                  ?? new LocaledResourceManager(typeof(LocaledRequireContextAttributeResource).FullName,
-                                                                typeof(LocaledRequireContextAttributeResource).Assembly);
+            : base(contexts)
+        { }
 
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
+            var resourceManager = (LocaledResourceManager<LocaledRequireContextAttributeResource>)services
+                .GetService(typeof(LocaledResourceManager<LocaledRequireContextAttributeResource>));
+
             bool isValid = false;
             var allowedContexts = resourceManager.GetString(nameof(LocaledRequireContextAttributeResource.ErrorMessage));
 

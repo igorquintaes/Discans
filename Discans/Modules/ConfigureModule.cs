@@ -17,7 +17,7 @@ namespace Discans.Modules
         private readonly UserLocalizerService userLocalizerService;
         private readonly ServerLocalizerService serverLocalizerService;
         private readonly AppDbContext dbContext;
-        private static LocaledResourceManager resourceManager;
+        private readonly LocaledResourceManager<ConfigureModuleResource> resourceManager;
 
         public const string ChannelCommand = "channel";
         public const string LanguageCommand = "language";
@@ -26,16 +26,14 @@ namespace Discans.Modules
             ChannelService channelService,
             UserLocalizerService userLocalizerService,
             ServerLocalizerService serverLocalizerService,
-            AppDbContext dbContext)
+            AppDbContext dbContext,
+            LocaledResourceManager<ConfigureModuleResource> resourceManager)
         {
             this.channelService = channelService;
             this.userLocalizerService = userLocalizerService;
             this.serverLocalizerService = serverLocalizerService;
             this.dbContext = dbContext;
-
-            resourceManager = resourceManager
-                ?? new LocaledResourceManager(typeof(ConfigureModuleResource).FullName,
-                                              typeof(ConfigureModuleResource).Assembly);
+            this.resourceManager = resourceManager;
         }
 
         [Command(ChannelCommand), Admin]

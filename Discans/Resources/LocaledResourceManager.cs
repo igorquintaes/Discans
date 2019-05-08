@@ -1,13 +1,13 @@
-﻿using System.Reflection;
-using System.Resources;
+﻿using System.Resources;
 using System.Threading;
 
 namespace Discans.Resources
 {
-    public class LocaledResourceManager : ResourceManager
+    public class LocaledResourceManager<T> : ResourceManager
     {
-        public LocaledResourceManager(string baseName, Assembly assembly) 
-            : base(baseName, assembly)
+        public LocaledResourceManager() 
+            : base(typeof(T).FullName,
+                   typeof(T).Assembly)
         { }
 
         public override string GetString(string name) => 

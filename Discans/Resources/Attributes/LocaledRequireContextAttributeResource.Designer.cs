@@ -22,7 +22,7 @@ namespace Discans.Resources.Attributes {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class LocaledRequireContextAttributeResource {
+    public class LocaledRequireContextAttributeResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Discans.Resources.Attributes {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Discans.Resources.Attributes.LocaledRequireContextAttributeResource", typeof(LocaledRequireContextAttributeResource).Assembly);
@@ -51,7 +51,7 @@ namespace Discans.Resources.Attributes {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Discans.Resources.Attributes {
         /// <summary>
         ///   Looks up a localized string similar to Direct Message.
         /// </summary>
-        internal static string DM {
+        public static string DM {
             get {
                 return ResourceManager.GetString("DM", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Discans.Resources.Attributes {
         /// <summary>
         ///   Looks up a localized string similar to Sorry, buy your command it not valid here! You can try sending it by:.
         /// </summary>
-        internal static string ErrorMessage {
+        public static string ErrorMessage {
             get {
                 return ResourceManager.GetString("ErrorMessage", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Discans.Resources.Attributes {
         /// <summary>
         ///   Looks up a localized string similar to User Group.
         /// </summary>
-        internal static string Group {
+        public static string Group {
             get {
                 return ResourceManager.GetString("Group", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Discans.Resources.Attributes {
         /// <summary>
         ///   Looks up a localized string similar to Server.
         /// </summary>
-        internal static string Server {
+        public static string Server {
             get {
                 return ResourceManager.GetString("Server", resourceCulture);
             }
