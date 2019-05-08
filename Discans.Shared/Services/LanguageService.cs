@@ -1,8 +1,6 @@
 ﻿using Discans.Shared.Database;
-using Discans.Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Discans.Shared.Services
 {

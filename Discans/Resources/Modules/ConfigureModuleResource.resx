@@ -121,7 +121,9 @@
     <value>Ok, i will start to send all notifications here!</value>
   </data>
   <data name="LanguageUnsupported" xml:space="preserve">
-    <value>We does not support that language :(</value>
+    <value>We does not support that language :(
+Here are all languages that we support:
+{0}</value>
   </data>
   <data name="LanguageUpdated" xml:space="preserve">
     <value>Your language has been updated!</value>

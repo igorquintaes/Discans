@@ -70,7 +70,9 @@ namespace Discans.Resources.Modules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to We does not support that language :(.
+        ///   Looks up a localized string similar to We does not support that language :(
+        ///Here are all languages that we support:
+        ///{0}.
         /// </summary>
         public static string LanguageUnsupported {
             get {

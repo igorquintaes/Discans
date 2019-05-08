@@ -5,6 +5,7 @@ using Discans.Shared.Database;
 using Discans.Shared.Services;
 using Discord;
 using Discord.Commands;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,8 +53,9 @@ namespace Discans.Modules
         {
             if (!LanguageService.AllowedLanguages.Contains(language))
             {
-                await ReplyAsync(resourceManager.GetString(
-                    nameof(ConfigureModuleResource.LanguageUnsupported)));
+                await ReplyAsync(string.Format(resourceManager.GetString(
+                    nameof(ConfigureModuleResource.LanguageUnsupported)),
+                    string.Join(Environment.NewLine, LanguageService.AllowedLanguages)));
                 return;
             }
 

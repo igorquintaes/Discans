@@ -12,8 +12,6 @@ using Discans.Shared.Services;
 using Discans.Shared.DiscordServices;
 using Discans.Shared;
 using Discans.Shared.DiscordServices.CrawlerSites;
-using System.Reflection;
-using System.Linq;
 using Discans.Resources;
 
 namespace Discans
