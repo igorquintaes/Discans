@@ -12,7 +12,7 @@ namespace Discans.Modules
 
         public InfoModule() => 
             resourceManager = resourceManager
-                ?? new LocaledResourceManager(nameof(InfoModuleResource),
+                ?? new LocaledResourceManager(typeof(InfoModuleResource).FullName,
                                               typeof(InfoModuleResource).Assembly);
 
         [Command(InfoCommand)]

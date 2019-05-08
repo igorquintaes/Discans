@@ -12,19 +12,15 @@ namespace Discans.Attributes
         private readonly int linkIndex;
         private static LocaledResourceManager resourceManager;
 
-        public ValidLinkAttribute()
-        {
-            linkIndex = 2;
-            resourceManager = resourceManager
-                              ?? new LocaledResourceManager(nameof(ValidLinkAttributeResource),
-                                                            typeof(ValidLinkAttributeResource).Assembly);
-        }
+        public ValidLinkAttribute() 
+            : this(2)
+        { }
 
         public ValidLinkAttribute(int linkIndex)
         {
             this.linkIndex = linkIndex;
             resourceManager = resourceManager
-                              ?? new LocaledResourceManager(nameof(ValidLinkAttributeResource),
+                              ?? new LocaledResourceManager(typeof(ValidLinkAttributeResource).FullName,
                                                             typeof(ValidLinkAttributeResource).Assembly);
         }
 

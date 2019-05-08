@@ -37,7 +37,7 @@ namespace Discans.Modules.Alert
             dbContext = context;
 
             resourceManager = resourceManager
-                ?? new LocaledResourceManager(nameof(UserAlertModuleResource),
+                ?? new LocaledResourceManager(typeof(UserAlertModuleResource).FullName,
                                               typeof(UserAlertModuleResource).Assembly);
         }
 

@@ -17,7 +17,7 @@ namespace Discans.Attributes
         public LocaledRequireContextAttribute(ContextType contexts)
             : base(contexts) => 
                 resourceManager = resourceManager 
-                                  ?? new LocaledResourceManager(nameof(LocaledRequireContextAttributeResource),
+                                  ?? new LocaledResourceManager(typeof(LocaledRequireContextAttributeResource).FullName,
                                                                 typeof(LocaledRequireContextAttributeResource).Assembly);
 
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)

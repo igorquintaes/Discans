@@ -5,6 +5,7 @@ using Discans.Shared.Database;
 using Discans.Shared.Services;
 using Discord;
 using Discord.Commands;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,7 +34,7 @@ namespace Discans.Modules
             this.dbContext = dbContext;
 
             resourceManager = resourceManager
-                ?? new LocaledResourceManager(nameof(ConfigureModuleResource),
+                ?? new LocaledResourceManager(typeof(ConfigureModuleResource).FullName,
                                               typeof(ConfigureModuleResource).Assembly);
         }
 
@@ -65,7 +66,7 @@ namespace Discans.Modules
 
             await dbContext.SaveChangesAsync(); 
             await ReplyAsync(resourceManager.GetString(
-                nameof(ConfigureModuleResource.LanguageUpdated)));
+                nameof(ConfigureModuleResource.LanguageUpdated), CultureInfo.GetCultureInfo(language)));
         }
     }
 }

@@ -20,9 +20,9 @@ namespace Discans.Modules.Alert
         private readonly AppDbContext dbContext;
         private static LocaledResourceManager resourceManager;
 
-        public const string AlertCommand = "private-alert-list";
-        public const string AlertRemoveCommand = "private-alert";
-        public const string AlertListCommand = "private-alert-remove";
+        public const string AlertCommand = "private-alert";
+        public const string AlertRemoveCommand = "private-alert-remove";
+        public const string AlertListCommand = "private-alert-list";
 
         public PrivateAlertModule(
             MangaService mangaService,
@@ -35,7 +35,7 @@ namespace Discans.Modules.Alert
             this.crawlerService = crawlerService;
             this.dbContext = dbContext;
             resourceManager = resourceManager
-                ?? new LocaledResourceManager(nameof(PrivateAlertModuleResource), 
+                ?? new LocaledResourceManager(typeof(PrivateAlertModuleResource).FullName, 
                                               typeof(PrivateAlertModuleResource).Assembly);
         }
         

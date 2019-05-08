@@ -14,10 +14,11 @@ namespace Discans.Attributes
 
         public AdminAttribute() => 
             resourceManager = resourceManager 
-                ?? new LocaledResourceManager(nameof(AdminAttributeResource), 
+                ?? new LocaledResourceManager(typeof(AdminAttributeResource).FullName, 
                                               typeof(AdminAttributeResource).Assembly);
 
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services) =>
+            context.Channel is IDMChannel ||
             (context.Message.Author as IGuildUser).GuildPermissions.Administrator
                 ? Task.FromResult(PreconditionResult.FromSuccess())
                 : Task.FromResult(PreconditionResult.FromError(resourceManager.GetString(

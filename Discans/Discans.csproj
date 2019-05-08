@@ -33,11 +33,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>LocaledRequireContextAttributeResource.resx</DependentUpon>
     </Compile>
-    <Compile Update="Resources\Attributes\LocaledRequireContextAttributeResource.pt-BR.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>LocaledRequireContextAttributeResource.pt-BR.resx</DependentUpon>
-    </Compile>
     <Compile Update="Resources\Attributes\ValidLinkAttributeResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -77,10 +72,6 @@
     <EmbeddedResource Update="Resources\Attributes\LocaledRequireContextAttributeResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LocaledRequireContextAttributeResource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Attributes\LocaledRequireContextAttributeResource.pt-BR.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LocaledRequireContextAttributeResource.pt-BR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Attributes\ValidLinkAttributeResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
