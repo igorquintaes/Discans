@@ -1,4 +1,6 @@
-﻿namespace Discans.Shared.Models
+﻿using System;
+
+namespace Discans.Shared.Models
 {
     public class ServerLocalizer : Localizer
     {
@@ -6,6 +8,10 @@
             : base(language) => 
                 ServerId = serverId;
 
-        public ulong ServerId { get; set; }
+        public ulong ServerId { get; protected set; }
+
+        public void UpdateLanguage(string language) =>
+            Language = language;
+
     }
 }

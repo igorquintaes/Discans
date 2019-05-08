@@ -117,16 +117,54 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DM" xml:space="preserve">
-    <value>Direct Message</value>
+  <data name="ServerAlertListAllEmpty" xml:space="preserve">
+    <value>There is no server alert or user alert here :/</value>
   </data>
-  <data name="ErrorMessage" xml:space="preserve">
-    <value>Sorry, buy your command it not valid here! You can try sending it by:</value>
+  <data name="ServerAlertListAllMessageHeader" xml:space="preserve">
+    <value>Here all alerts for this server:</value>
   </data>
-  <data name="Group" xml:space="preserve">
-    <value>User Group</value>
+  <data name="ServerAlertListAllMessageItem" xml:space="preserve">
+    <value>```ini
+Manga: [{0}]
+Who will be alerted: [all from '{1}']
+Last release: [{2}]
+Based on: [{3}]
+```</value>
   </data>
-  <data name="Server" xml:space="preserve">
-    <value>Server</value>
+  <data name="ServerAlertListEmpty" xml:space="preserve">
+    <value>I have no server alert here :(</value>
+  </data>
+  <data name="ServerAlertListMessageHeader" xml:space="preserve">
+    <value>Configurated alerts directly for this server mention:</value>
+  </data>
+  <data name="ServerAlertListMessageItem" xml:space="preserve">
+    <value>```ini
+Manga: [{0}]
+Last Release: [{1}]
+Based on: [{2}]
+```</value>
+  </data>
+  <data name="ServerAlertRemoveAllConfirmSuccess" xml:space="preserve">
+    <value>All project and user alers will no more be sent in this server. I will miss you :´(</value>
+  </data>
+  <data name="ServerAlertRemoveAllMessage" xml:space="preserve">
+    <value>It will REMOVE ALL ALERTS in your server - it can be User Alerts and Server Alerts. Are you sure?
+
+If you are, type `{0}`.</value>
+  </data>
+  <data name="ServerAlertRemoveSuccess" xml:space="preserve">
+    <value>The server will no more be alerted about that release.</value>
+  </data>
+  <data name="ServerAlertSuccess" xml:space="preserve">
+    <value>Ok, I got it!
+After a new release I will alert you!
+
+This register contains the following informations :
+```ini
+Mangá name: [{0}]
+Users to be alerted: [All server users]
+Last release: [{1}]
+Based on: [{2}]
+```</value>
   </data>
 </root>

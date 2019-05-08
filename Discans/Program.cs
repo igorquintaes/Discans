@@ -28,8 +28,12 @@ namespace Discans
             var client = new DiscordSocketClient();
             var services = ConfigureServices(client);
 
-            var context = services.GetRequiredService<AppDbContext>();
-            context.Database.Migrate();
+            using (var context = services.GetRequiredService<AppDbContext>())
+            {
+                context.Database.Migrate();
+                UserLocalizerService.Languages = await context.UserLocalizer.ToDictionaryAsync(x => x.UserId, x => x.Language);
+                ServerLocalizerService.Languages = await context.ServerLocalizer.ToDictionaryAsync(x => x.ServerId, x => x.Language);
+            }
 
             services.GetRequiredService<LogService>();
             await services.GetRequiredService<CommandHandling>().InitializeAsync(services);

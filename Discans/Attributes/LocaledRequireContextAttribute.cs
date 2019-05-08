@@ -1,7 +1,9 @@
-﻿using Discord;
+﻿using Discans.Resources.Attributes;
+using Discord;
 using Discord.Commands;
 using System;
 using System.Resources;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Discans.Attributes
@@ -13,27 +15,37 @@ namespace Discans.Attributes
 
         private static ResourceManager resourceManager;
 
-        public LocaledRequireContextAttribute(ContextType contexts, Type type) 
-            : base(contexts)
-        {
-            resourceManager = resourceManager ?? new ResourceManager(type);
-        }
+        public LocaledRequireContextAttribute(ContextType contexts)
+            : base(contexts) => 
+                resourceManager = resourceManager 
+                                  ?? new ResourceManager(typeof(LocaledRequireContextAttributeResource));
 
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             bool isValid = false;
+            var allowedContexts = resourceManager.GetString(nameof(LocaledRequireContextAttributeResource.ErrorMessage), Thread.CurrentThread.CurrentCulture);
 
             if ((Contexts & ContextType.Guild) != 0)
+            {
                 isValid = context.Channel is IGuildChannel;
-            if ((Contexts & ContextType.DM) != 0)
-                isValid = isValid || context.Channel is IDMChannel;
-            if ((Contexts & ContextType.Group) != 0)
-                isValid = isValid || context.Channel is IGroupChannel;
+                allowedContexts += $"{Environment.NewLine}{resourceManager.GetString(nameof(LocaledRequireContextAttributeResource.Server), Thread.CurrentThread.CurrentCulture)}";
+            }
 
-            if (isValid)
-                return Task.FromResult(PreconditionResult.FromSuccess());
-            else
-                return Task.FromResult(PreconditionResult.FromError(resourceManager.GetString(ErrorMessage)));
+            if ((Contexts & ContextType.DM) != 0)
+            {
+                isValid = isValid || context.Channel is IDMChannel;
+                allowedContexts += $"{Environment.NewLine}{resourceManager.GetString(nameof(LocaledRequireContextAttributeResource.DM), Thread.CurrentThread.CurrentCulture)}";
+            }
+
+            if ((Contexts & ContextType.Group) != 0)
+            {
+                isValid = isValid || context.Channel is IGroupChannel;
+                allowedContexts += $"{Environment.NewLine}{resourceManager.GetString(nameof(LocaledRequireContextAttributeResource.Group), Thread.CurrentThread.CurrentCulture)}";
+            }
+
+            return isValid
+                ? Task.FromResult(PreconditionResult.FromSuccess())
+                : Task.FromResult(PreconditionResult.FromError(allowedContexts));
         }
     }
 }

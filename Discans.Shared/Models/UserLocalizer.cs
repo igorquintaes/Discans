@@ -1,4 +1,6 @@
-﻿namespace Discans.Shared.Models
+﻿using System;
+
+namespace Discans.Shared.Models
 {
     public class UserLocalizer : Localizer
     {
@@ -6,6 +8,9 @@
             : base(language) => 
                 UserId = userId;
 
-        public ulong UserId { get; set; }
+        public ulong UserId { get; protected set; }
+
+        internal void UpdateLanguage(string language) => 
+            Language = language;
     }
 }

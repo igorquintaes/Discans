@@ -117,16 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DM" xml:space="preserve">
-    <value>Direct Message</value>
+  <data name="AlertListChunck" xml:space="preserve">
+    <value>```ini
+Manga: [{0}]
+Last release: [{1}]
+Based on: [{2}]
+```</value>
   </data>
-  <data name="ErrorMessage" xml:space="preserve">
-    <value>Sorry, buy your command it not valid here! You can try sending it by:</value>
+  <data name="AlertListTitle" xml:space="preserve">
+    <value>You alerts:</value>
   </data>
-  <data name="Group" xml:space="preserve">
-    <value>User Group</value>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>You have no alerts :(</value>
   </data>
-  <data name="Server" xml:space="preserve">
-    <value>Server</value>
+  <data name="UserAlertRemove" xml:space="preserve">
+    <value>You will stop to receive notifications of that manga.</value>
+  </data>
+  <data name="UserAlertSuccess" xml:space="preserve">
+    <value>Ok! You are going to receive an alert after a new release of this manga!
+You can also check your private alert list using the follow command `{0}`
+
+This alert form contains the following informations:
+```ini
+Manga name: [{1}]
+Last released chapter: [{2}]
+Based on: [{3}]
+```</value>
   </data>
 </root>

@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DM" xml:space="preserve">
-    <value>Direct Message</value>
+    <value>Mensagem Direta</value>
   </data>
   <data name="ErrorMessage" xml:space="preserve">
-    <value>Sorry, buy your command it not valid here! You can try sending it by:</value>
+    <value>Perdão, mas não aceito esse tipo de comando por aqui! Você pode tentar usar esse comando por:</value>
   </data>
   <data name="Group" xml:space="preserve">
-    <value>User Group</value>
+    <value>Grupo de Usuários</value>
   </data>
   <data name="Server" xml:space="preserve">
-    <value>Server</value>
+    <value>Servidor</value>
   </data>
 </root>

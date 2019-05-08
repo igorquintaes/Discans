@@ -2,7 +2,9 @@
 using Discans.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Discans.Shared.Services
@@ -25,9 +27,11 @@ namespace Discans.Shared.Services
             }
 
             var userLocalizer = await context.UserLocalizer.FirstOrDefaultAsync(x => x.UserId == userId);
-            userLocalizer.Language = language;
+            userLocalizer.UpdateLanguage(language);
             context.UserLocalizer.Update(userLocalizer);
             Languages[userId] = language;
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(language);
         }
     }
 }

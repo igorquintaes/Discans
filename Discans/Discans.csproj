@@ -69,7 +69,6 @@
       <DependentUpon>InfoModuleResource.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Resources\Attributes\AdminAttributeResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>

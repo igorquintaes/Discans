@@ -10,6 +10,8 @@ namespace Discans.Shared.DiscordServices
         private readonly MangaUpdatesCrawlerService mangaUpdates;
         private readonly TuMangaCrawlerService tuManga;
 
+        public IMangaSiteCrawlerService SiteCrawler { get; private set; }
+
         public CrawlerService(
             MangaUpdatesCrawlerService mangaUpdates, 
             TuMangaCrawlerService tuManga)
@@ -18,11 +20,11 @@ namespace Discans.Shared.DiscordServices
             this.tuManga = tuManga;
         }
 
-        public async Task<(bool, IMangaSiteCrawlerService)> LoadPageAsync(string link)
+        public async Task<bool> LoadPageAsync(string link)
         {
             if (!Uri.TryCreate(link, UriKind.RelativeOrAbsolute, out var uri)
              || link.StartsWith("<"))
-                return (false, default);
+                return false;
 
             switch (uri.Host.Replace("www.", ""))
             {
@@ -30,20 +32,22 @@ namespace Discans.Shared.DiscordServices
                     var mangaUpdatesDocument = await new HtmlWeb().LoadFromWebAsync(uri.AbsoluteUri);
                     var mangaUpdatesNodes = mangaUpdatesDocument.DocumentNode.SelectNodes("//span[contains(@class, 'releasestitle')]");
                     if (mangaUpdatesNodes?.Count != 1)
-                        return (false, default);
+                        return false;
 
                     mangaUpdates.SetDocument(mangaUpdatesDocument);
-                    return (true, mangaUpdates);
+                    SiteCrawler = mangaUpdates;
+                    return true;
                 case "tmofans.com":
                     var tuMangaDocument = await new HtmlWeb().LoadFromWebAsync(uri.AbsoluteUri);
                     var tuMangaNodes = tuMangaDocument.DocumentNode.SelectNodes("//div[@id='app']//div[@class='card chapters']");
                     if (tuMangaNodes?.Count != 1)
-                        return (false, default);
+                        return false;
 
                     tuManga.SetDocument(tuMangaDocument);
-                    return (true, tuManga);
+                    SiteCrawler = tuManga;
+                    return true;
                 default:
-                    return (false, default);
+                    return false;
             }
         }
     }

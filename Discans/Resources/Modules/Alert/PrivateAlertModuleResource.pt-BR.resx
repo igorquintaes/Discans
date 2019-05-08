@@ -117,16 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DM" xml:space="preserve">
-    <value>Direct Message</value>
+  <data name="AlertListChunck" xml:space="preserve">
+    <value>```ini
+Mangá: [{0}]
+Último lançamento: [{1}]
+Fonte: [{2}]
+```</value>
   </data>
-  <data name="ErrorMessage" xml:space="preserve">
-    <value>Sorry, buy your command it not valid here! You can try sending it by:</value>
+  <data name="AlertListTitle" xml:space="preserve">
+    <value>Seus alertas são:</value>
   </data>
-  <data name="Group" xml:space="preserve">
-    <value>User Group</value>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>Você não tem alertas :(</value>
   </data>
-  <data name="Server" xml:space="preserve">
-    <value>Server</value>
+  <data name="UserAlertRemove" xml:space="preserve">
+    <value>Você não receberá mais notificações desse mangá.</value>
+  </data>
+  <data name="UserAlertSuccess" xml:space="preserve">
+    <value>Muito bem! Você receberá o alerta quando sair um capítulo novo!
+Você pode ver a lista de todos os seus alertas o comando `{0}`
+
+Esse cadastro envolve as seguintes informações:
+```ini
+Nome do mangá: [{1}]
+Último capítulo lançado: [{2}]
+Fonte: [{3}]
+```</value>
   </data>
 </root>

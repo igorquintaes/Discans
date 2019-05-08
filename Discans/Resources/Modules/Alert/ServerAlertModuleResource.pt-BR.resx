@@ -117,16 +117,54 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DM" xml:space="preserve">
-    <value>Direct Message</value>
+  <data name="ServerAlertListAllEmpty" xml:space="preserve">
+    <value>Este servidor não tem nenhum tipo de alerta :/</value>
   </data>
-  <data name="ErrorMessage" xml:space="preserve">
-    <value>Sorry, buy your command it not valid here! You can try sending it by:</value>
+  <data name="ServerAlertListAllMessageHeader" xml:space="preserve">
+    <value>Aqui está todos os alertas deste servidor:</value>
   </data>
-  <data name="Group" xml:space="preserve">
-    <value>User Group</value>
+  <data name="ServerAlertListAllMessageItem" xml:space="preserve">
+    <value>```ini
+Mangá: [{0}]
+Quem será alertado: [todos de '{1}']
+Último lançamento: [{2}]
+Fonte: [{3}]
+```</value>
   </data>
-  <data name="Server" xml:space="preserve">
-    <value>Server</value>
+  <data name="ServerAlertListEmpty" xml:space="preserve">
+    <value>Não tenho nenhum alerta configurado para o servidor :(</value>
+  </data>
+  <data name="ServerAlertListMessageHeader" xml:space="preserve">
+    <value>Alertas configurados diretamente para todos deste servidor:</value>
+  </data>
+  <data name="ServerAlertListMessageItem" xml:space="preserve">
+    <value>```ini
+Mangá: [{0}]
+Último lançamento: [{1}]
+Fonte: [{2}]
+```</value>
+  </data>
+  <data name="ServerAlertRemoveAllConfirmSuccess" xml:space="preserve">
+    <value>Todos os alertas de servidores e de usuários não serão mais enviados para este servidor. Eu sentirei a sua falta :´(</value>
+  </data>
+  <data name="ServerAlertRemoveAllMessage" xml:space="preserve">
+    <value>Isso irá remover TODOS os alertas configurados neste servidor - seja alertas de Servidor ou de Usuários exibidos por aqui. Você tem certeza?
+
+Caso positivo, digite `{0}`.</value>
+  </data>
+  <data name="ServerAlertRemoveSuccess" xml:space="preserve">
+    <value>O servidor não será mais alertado sobre esse lançamento</value>
+  </data>
+  <data name="ServerAlertSuccess" xml:space="preserve">
+    <value>Beleza, tá anotado!
+Assim que sair um capítulo novo eu aviso!
+
+Esse cadastro envolve as seguintes informações:
+```ini
+Nome do mangá: [{0}]
+Quem será alertado: [Todos do servidor]
+Último capítulo lançado: [{1}]
+Fonte: [{2}]
+```</value>
   </data>
 </root>

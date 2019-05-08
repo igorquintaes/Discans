@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Discans.Resources.Attributes {
+namespace Discans.Resources.Modules.Alert {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Discans.Resources.Attributes {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class LocaledRequireContextAttributeResource {
+    internal class PrivateAlertModuleResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal LocaledRequireContextAttributeResource() {
+        internal PrivateAlertModuleResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Discans.Resources.Attributes {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Discans.Resources.Attributes.LocaledRequireContextAttributeResource", typeof(LocaledRequireContextAttributeResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Discans.Resources.Modules.Alert.PrivateAlertModuleResource", typeof(PrivateAlertModuleResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,38 +61,59 @@ namespace Discans.Resources.Attributes {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Direct Message.
+        ///   Looks up a localized string similar to ```ini
+        ///Manga: [{0}]
+        ///Last release: [{1}]
+        ///Based on: [{2}]
+        ///```.
         /// </summary>
-        internal static string DM {
+        internal static string AlertListChunck {
             get {
-                return ResourceManager.GetString("DM", resourceCulture);
+                return ResourceManager.GetString("AlertListChunck", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sorry, buy your command it not valid here! You can try sending it by:.
+        ///   Looks up a localized string similar to You alerts:.
         /// </summary>
-        internal static string ErrorMessage {
+        internal static string AlertListTitle {
             get {
-                return ResourceManager.GetString("ErrorMessage", resourceCulture);
+                return ResourceManager.GetString("AlertListTitle", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Group.
+        ///   Looks up a localized string similar to You have no alerts :(.
         /// </summary>
-        internal static string Group {
+        internal static string NoAlerts {
             get {
-                return ResourceManager.GetString("Group", resourceCulture);
+                return ResourceManager.GetString("NoAlerts", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Server.
+        ///   Looks up a localized string similar to You will stop to receive notifications of that manga..
         /// </summary>
-        internal static string Server {
+        internal static string UserAlertRemove {
             get {
-                return ResourceManager.GetString("Server", resourceCulture);
+                return ResourceManager.GetString("UserAlertRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok! You are going to receive an alert after a new release of this manga!
+        ///You can also check your private alert list using the follow command `{0}`
+        ///
+        ///This alert form contains the following informations:
+        ///```ini
+        ///Manga name: [{1}]
+        ///Last released chapter: [{2}]
+        ///Based on: [{3}]
+        ///```.
+        /// </summary>
+        internal static string UserAlertSuccess {
+            get {
+                return ResourceManager.GetString("UserAlertSuccess", resourceCulture);
             }
         }
     }

@@ -48,13 +48,8 @@ namespace Discans.Modules.Alert
                 return;
             }
 
-            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
-            if (!isLinkValid)
-            {
-                await ReplyAsync("Link inválido! T_T");
-                return;
-            }
 
+            var mangaCrawlerService = crawlerService.SiteCrawler;
             users = users.GroupBy(x => x.Id).Select(x => x.First()).ToArray();
             var mangaId = mangaCrawlerService.GetMangaId();
             var mangaName = mangaCrawlerService.GetMangaName();
@@ -126,12 +121,7 @@ Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
                 return;
             }
 
-            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
-            if (!isLinkValid)
-            {
-                await ReplyAsync("Link inválido! T_T");
-                return;
-            }
+            var mangaCrawlerService = crawlerService.SiteCrawler;
 
             // todo: change mangaId
             var mangaSiteId = mangaCrawlerService.GetMangaId();

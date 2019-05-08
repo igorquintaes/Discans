@@ -1,13 +1,13 @@
 ﻿using Discans.Extensions;
 ﻿using Discans.Attributes;
-using Discans.Resources.Attributes;
+using Discans.Resources;
+using Discans.Resources.Modules.Alert;
 using Discans.Shared.Database;
 using Discans.Shared.DiscordServices;
 using Discans.Shared.Services;
 using Discord.Commands;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Discans.Modules.Alert
@@ -18,6 +18,11 @@ namespace Discans.Modules.Alert
         private readonly PrivateAlertService privateAlertService;
         private readonly CrawlerService crawlerService;
         private readonly AppDbContext dbContext;
+        private static LocaledResourceManager resourceManager;
+
+        public const string AlertCommand = "private-alert-list";
+        public const string AlertRemoveCommand = "private-alert";
+        public const string AlertListCommand = "private-alert-remove";
 
         public PrivateAlertModule(
             MangaService mangaService,
@@ -29,20 +34,16 @@ namespace Discans.Modules.Alert
             this.privateAlertService = privateAlertService;
             this.crawlerService = crawlerService;
             this.dbContext = dbContext;
+            resourceManager = resourceManager
+                ?? new LocaledResourceManager(nameof(PrivateAlertModuleResource), 
+                                              typeof(PrivateAlertModuleResource).Assembly);
         }
-
-        // TODO: change resource
-        [Command("private-alert")]
-        [LocaledRequireContext(ContextType.DM, typeof(LocaledRequireContextAttributeResource))]
-        public async Task UserAlert(string link)
+        
+        [Command(AlertCommand), ValidLink]
+        [LocaledRequireContext(ContextType.DM)]
+        public async Task PrivateAlert(string link)
         {
-            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
-            if (!isLinkValid)
-            {
-                await ReplyAsync("Link inválido! T_T");
-                return;
-            }
-
+            var mangaCrawlerService = crawlerService.SiteCrawler;
             var mangaId = mangaCrawlerService.GetMangaId();
             var mangaName = mangaCrawlerService.GetMangaName();
             var lastRelease = mangaCrawlerService.GetLastChapter();
@@ -53,62 +54,49 @@ namespace Discans.Modules.Alert
                 manga: manga);
 
             await dbContext.SaveChangesAsync();
+            var message = string.Format(
+                resourceManager.GetString(nameof(PrivateAlertModuleResource.UserAlertSuccess)),
+                $"{Consts.BotCommand}{AlertListCommand}",
+                mangaName,
+                lastRelease,
+                mangaCrawlerService.MangaSite.ToString());
 
-            var resposta = new StringBuilder();
-            resposta.AppendLine("Muito bem! Você receberá o alerta quando sair um capítulo novo!");
-            resposta.AppendLine($"Você pode ver a lista de todos os seus alertas o comando `{Consts.BotCommand}private-alert-list`");
-            resposta.AppendLine("");
-
-            resposta.AppendLine($@"Esse cadastro envolve as seguintes informações:
-```ini
-Nome do mangá: [{mangaName}]
-Último capítulo lançado: [{lastRelease}]
-Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
-```");
-
-            await ReplyAsync(resposta.ToString());
+            await ReplyAsync(message);
         }
 
-        [Command("private-alert-remove")]
-        [LocaledRequireContext(ContextType.DM, typeof(LocaledRequireContextAttributeResource))]
-        public async Task UserAlertRemove(string link)
+        [Command(AlertRemoveCommand), ValidLink]
+        [LocaledRequireContext(ContextType.DM)]
+        public async Task PrivateAlertRemove(string link)
         {
-            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
-            if (!isLinkValid)
-            {
-                await ReplyAsync("Link inválido! T_T");
-                return;
-            }
-
+            var mangaCrawlerService = crawlerService.SiteCrawler;
             var mangaSiteId = mangaCrawlerService.GetMangaId();
             await privateAlertService.Remove(Context.User.Id, mangaSiteId, mangaCrawlerService.MangaSite);
             await dbContext.SaveChangesAsync();
-            await ReplyAsync("Os usuários foram desvinculados do projeto mencionado.");
+            await ReplyAsync(resourceManager.GetString(nameof(PrivateAlertModuleResource.UserAlertRemove)));
         }
                
-        [Command("private-alert-list")]
-        [LocaledRequireContext(ContextType.DM, typeof(LocaledRequireContextAttributeResource))]
-        public async Task AlertList()
+        [Command(AlertListCommand)]
+        [LocaledRequireContext(ContextType.DM)]
+        public async Task PrivateAlertList()
         {
             var alerts = await privateAlertService.GetAlerts(Context.User.Id);
-
             if (!alerts.Any())
             {
-                await ReplyAsync("Não tenho nenhum alerta para você :/");
+                await ReplyAsync(resourceManager.GetString(nameof(PrivateAlertModuleResource.NoAlerts)));
                 return;
             }
 
-            var alertMessages = alerts.Select(x => 
-$@"```ini
-Mangá: [{x.Manga.Name}]
-Último lançamento: [{x.Manga.LastRelease}]
-Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
-```");
+            var alertMessages = alerts
+                .Select(x => string.Format(
+                    nameof(PrivateAlertModuleResource.AlertListChunck),
+                    x.Manga.Name,
+                    x.Manga.LastRelease,
+                    x.Manga.MangaSite.ToString()))
+                .ToList()
+                .ChunkList(10);
 
-            await ReplyAsync($@"Alertas configurados diretamente para você:");
-            var alertChuncks = alertMessages.ToList().ChunkList(10);
-
-            foreach (var alertChunck in alertChuncks)
+            await ReplyAsync(nameof(PrivateAlertModuleResource.AlertListTitle));
+            foreach (var alertChunck in alertMessages)
                 await ReplyAsync(string.Join(Environment.NewLine, alertChunck));
         }
     }
