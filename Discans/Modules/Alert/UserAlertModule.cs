@@ -1,4 +1,7 @@
 ﻿using Discans.Extensions;
+﻿using Discans.Attributes;
+using Discans.Resources;
+using Discans.Resources.Modules.Alert;
 using Discans.Shared.Database;
 using Discans.Shared.DiscordServices;
 using Discans.Shared.Services;
@@ -6,7 +9,6 @@ using Discord;
 using Discord.Commands;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Discans.Modules.Alert
@@ -17,6 +19,11 @@ namespace Discans.Modules.Alert
         private readonly UserAlertService userAlertService;
         private readonly CrawlerService crawlerService;
         private readonly AppDbContext dbContext;
+        private static LocaledResourceManager resourceManager;
+
+        public const string AlertCommand = "user-alert";
+        public const string AlertRemoveCommand = "user-alert-remove";
+        public const string AlertListCommand = "user-alert-list";
 
         public UserAlertModule(
             MangaService mangaService,
@@ -27,27 +34,31 @@ namespace Discans.Modules.Alert
             this.mangaService = mangaService;
             this.userAlertService = userAlertService;
             this.crawlerService = crawlerService;
-            this.dbContext = context;
+            dbContext = context;
+
+            resourceManager = resourceManager
+                ?? new LocaledResourceManager(nameof(UserAlertModuleResource),
+                                              typeof(UserAlertModuleResource).Assembly);
         }
 
-        [Command("user-alert")]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
+        [Command(AlertCommand), ValidLink]
+        [LocaledRequireContext(ContextType.Guild)]
         public async Task UserAlert(string link, params IGuildUser[] users)
         {
+            if (!users.Any())
+            {
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(UserAlertModuleResource.UserNotFound)));
+                return;
+            }
+
             if (!(Context.Message.Author as IGuildUser).Guild.Roles.Any(x => x.Permissions.Administrator)
                 && users.Any(x => x.Id != Context.Message.Author.Id))
             {
-                await ReplyAsync("Só o administrador pode alertar outras pessoas. " +
-                    "Se quiser, ainda é possível criar um alerta apenas para você :)");
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(UserAlertModuleResource.OnlyAdminAlertSomeoneElse)));
                 return;
             }
-
-            if (!users.Any())
-            {
-                await ReplyAsync("Não achei o nome de ninguém! T_T");
-                return;
-            }
-
 
             var mangaCrawlerService = crawlerService.SiteCrawler;
             users = users.GroupBy(x => x.Id).Select(x => x.First()).ToArray();
@@ -62,97 +73,87 @@ namespace Discans.Modules.Alert
                 manga: manga);
 
             await dbContext.SaveChangesAsync();
-
-            var resposta = new StringBuilder();
-            resposta.AppendLine("Muito bem! As pessoas aí receberão o alerta quando sair um capítulo novo!");
-            resposta.AppendLine($"Você pode ver a lista de todos os alerta deste servidor com o comando `{Consts.BotCommand}server-alert-list-all`");
-            resposta.AppendLine("");
-
-            var usersReplyMessage = string.Join(", ", users.Select(x => x.Nickname ?? x.Username));
-            resposta.AppendLine($@"Esse cadastro envolve as seguintes informações:
-```ini
-Nome do mangá: [{mangaName}]
-Quem será alertado: [{usersReplyMessage}]
-Último capítulo lançado: [{lastRelease}]
-Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
-```");
-
-            await ReplyAsync(resposta.ToString());
-        }
-        
-        [Command("user-alert-remove"), Priority(2)]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
-        public async Task UserAlertRemove(params IGuildUser[] users)
-        {
-            if (!(Context.Message.Author as IGuildUser).Guild.Roles.Any(x => x.Permissions.Administrator)
-                && users.Any(x => x.Id != Context.Message.Author.Id))
-            {
-                await ReplyAsync("Só o administrador pode alertar outras pessoas. " +
-                    "Se quiser, ainda é possível criar um alerta apenas para você :)");
-                return;
-            }
-
-            if (!users.Any())
-            {
-                await ReplyAsync("Não achei o nome de ninguém! T_T");
-                return;
-            }
-
-            await userAlertService.Remove(Context.Guild.Id, users.Select(x => x.Id));
-            await dbContext.SaveChangesAsync();
-            await ReplyAsync("Os usuários foram desvinculados de todos os projetos deste servidor.");
+            await ReplyAsync(string.Format(resourceManager.GetString(
+                nameof(UserAlertModuleResource.UserAlertSuccess)),
+                $"{Consts.BotCommand}{ServerAlertModule.AlertListAllCommand}",
+                manga.Name,
+                string.Join(", ", users.Select(x => x.Nickname ?? x.Username)),
+                manga.LastRelease,
+                mangaCrawlerService.MangaSite.ToString()));
         }
 
-        [Command("user-alert-remove"), Priority(1)]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
+        [Command(AlertRemoveCommand), Priority(1), ValidLink]
+        [LocaledRequireContext(ContextType.Guild)]
         public async Task UserAlertRemove(string link, params IGuildUser[] users)
         {
+            if (!users.Any())
+            {
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(UserAlertModuleResource.UserNotFound)));
+                return;
+            }
+
             if (!(Context.Message.Author as IGuildUser).Guild.Roles.Any(x => x.Permissions.Administrator)
                 && users.Any(x => x.Id != Context.Message.Author.Id))
             {
-                await ReplyAsync("Só o administrador pode alertar outras pessoas. " +
-                    "Se quiser, ainda é possível criar um alerta apenas para você :)");
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(UserAlertModuleResource.OnlyAdminAlertSomeoneElse)));
                 return;
             }
 
+            var mangaId = crawlerService.SiteCrawler.GetMangaId();
+            await userAlertService.Remove(Context.Guild.Id, users.Select(x => x.Id), mangaId, crawlerService.SiteCrawler.MangaSite);
+            await dbContext.SaveChangesAsync();
+            await ReplyAsync(resourceManager.GetString(
+                nameof(UserAlertModuleResource.UserAlertRemoveSuccess)));
+        }
+
+        [Command(AlertRemoveCommand), Priority(2)]
+        [LocaledRequireContext(ContextType.Guild)]
+        public async Task UserAlertRemove(params IGuildUser[] users)
+        {
             if (!users.Any())
             {
-                await ReplyAsync("Não achei o nome de ninguém! T_T");
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(UserAlertModuleResource.UserNotFound)));
                 return;
             }
 
-            var mangaCrawlerService = crawlerService.SiteCrawler;
+            if (!(Context.Message.Author as IGuildUser).Guild.Roles.Any(x => x.Permissions.Administrator)
+                && users.Any(x => x.Id != Context.Message.Author.Id))
+            {
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(UserAlertModuleResource.OnlyAdminAlertSomeoneElse)));
+                return;
+            }
 
-            // todo: change mangaId
-            var mangaSiteId = mangaCrawlerService.GetMangaId();
-            await userAlertService.Remove(Context.Guild.Id, users.Select(x => x.Id), mangaSiteId, mangaCrawlerService.MangaSite);
+            var mangaSiteId = crawlerService.SiteCrawler.GetMangaId();
+            await userAlertService.Remove(Context.Guild.Id, users.Select(x => x.Id), mangaSiteId, crawlerService.SiteCrawler.MangaSite);
             await dbContext.SaveChangesAsync();
-            await ReplyAsync("Os usuários foram desvinculados do projeto mencionado.");
+            await ReplyAsync(resourceManager.GetString(
+                nameof(UserAlertModuleResource.UserAlertRemoveAllSuccess)));
         }
                
-        [Command("user-alert-list")]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
-        public async Task AlertList(IGuildUser user)
+        [Command(AlertListCommand)]
+        [LocaledRequireContext(ContextType.Guild)]
+        public async Task UserAlertList(IGuildUser user)
         {
             var alerts = await userAlertService.GerUserServerAlerts(Context.Guild.Id, user.Id);
 
             if (!alerts.Any())
             {
-                await ReplyAsync("Não tem nenhum alerta no servidor para esse mano aí :/");
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(UserAlertModuleResource.UserHasNoAlerts)));
                 return;
             }
 
-            var alertMessages = alerts.Select(x => 
-$@"```ini
-Mangá: [{x.Manga.Name}]
-Último lançamento: [{x.Manga.LastRelease}]
-Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
-```");
+            var alertMessages = alerts.Select(x => string.Format(resourceManager.GetString(
+                nameof(UserAlertModuleResource.UserAlertListMessageItem)),
+                x.Manga.Name,
+                x.Manga.LastRelease));
 
-            await ReplyAsync($@"Alertas configurados diretamente para o usuário {Context.Guild.GetUser(user.Id).Username}:");
-            var alertChuncks = alertMessages.ToList().ChunkList(10);
-
-            foreach (var alertChunck in alertChuncks)
+            await ReplyAsync(resourceManager.GetString(nameof(UserAlertModuleResource.UserAlertListHeader)));
+            foreach (var alertChunck in alertMessages.ToList().ChunkList(10))
                 await ReplyAsync(string.Join(Environment.NewLine, alertChunck));
         }
     }

@@ -20,6 +20,7 @@ namespace Discans.Attributes
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services) =>
             (context.Message.Author as IGuildUser).GuildPermissions.Administrator
                 ? Task.FromResult(PreconditionResult.FromSuccess())
-                : Task.FromResult(PreconditionResult.FromError(resourceManager.GetString("YouNeedToBeAnAdmin")));
+                : Task.FromResult(PreconditionResult.FromError(resourceManager.GetString(
+                    nameof(AdminAttributeResource.YouNeedToBeAnAdmin))));
     }
 }
