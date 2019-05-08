@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Discans.Modules;
 using Discans.Shared.Services;
 using Discord;
 using Discord.Commands;
@@ -29,7 +30,7 @@ namespace Discans
             this.languageService = languageService;
             this.provider = provider;
 
-            this.discord.SetGameAsync($"{Consts.BotCommand}info", "https://github.com/igorquintaes/Discans");
+            this.discord.SetGameAsync($"{Consts.BotCommand}{InfoModule.InfoCommand}", "https://github.com/igorquintaes/Discans");
             this.discord.MessageReceived += MessageReceived;
         }
 
