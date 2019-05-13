@@ -26,7 +26,7 @@ namespace Discans.Shared.Services
                 return;
             }
 
-            var userLocalizer = await context.UserLocalizer.FirstOrDefaultAsync(x => x.UserId == userId);
+            var userLocalizer = await context.UserLocalizer.FirstAsync(x => x.UserId == userId);
             userLocalizer.UpdateLanguage(language);
             context.UserLocalizer.Update(userLocalizer);
             Languages[userId] = language;

@@ -26,10 +26,11 @@ namespace Discans.Shared.Services
                 return;
             }
 
-            var serverLocalizer = await context.ServerLocalizer.FirstOrDefaultAsync(x => x.ServerId == serverId);
+            var serverLocalizer = await context.ServerLocalizer.FirstAsync(x => x.ServerId == serverId);
             serverLocalizer.UpdateLanguage(language);
             context.ServerLocalizer.Update(serverLocalizer);
             Languages[serverId] = language;
+
             Thread.CurrentThread.CurrentCulture = new CultureInfo(language);
         }
     }

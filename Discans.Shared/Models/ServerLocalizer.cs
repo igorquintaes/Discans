@@ -10,8 +10,5 @@ namespace Discans.Shared.Models
 
         public ulong ServerId { get; protected set; }
 
-        public void UpdateLanguage(string language) =>
-            Language = language;
-
     }
 }

@@ -9,8 +9,5 @@ namespace Discans.Shared.Models
                 UserId = userId;
 
         public ulong UserId { get; protected set; }
-
-        internal void UpdateLanguage(string language) => 
-            Language = language;
     }
 }
