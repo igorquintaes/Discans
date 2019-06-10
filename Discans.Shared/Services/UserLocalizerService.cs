@@ -23,6 +23,8 @@ namespace Discans.Shared.Services
             {
                 context.UserLocalizer.Add(new UserLocalizer(userId, language));
                 Languages.Add(userId, language);
+
+                Thread.CurrentThread.CurrentCulture = new CultureInfo(language);
                 return;
             }
 
