@@ -23,6 +23,83 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Attributes\AdminAttributeResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AdminAttributeResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Attributes\LocaledRequireContextAttributeResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LocaledRequireContextAttributeResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Attributes\ValidLinkAttributeResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ValidLinkAttributeResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Modules\Alert\PrivateAlertModuleResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PrivateAlertModuleResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Modules\Alert\ServerAlertModuleResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ServerAlertModuleResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Modules\Alert\UserAlertModuleResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UserAlertModuleResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Modules\ConfigureModuleResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ConfigureModuleResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Modules\InfoModuleResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>InfoModuleResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Attributes\AdminAttributeResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AdminAttributeResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Attributes\LocaledRequireContextAttributeResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LocaledRequireContextAttributeResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Attributes\ValidLinkAttributeResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ValidLinkAttributeResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Modules\Alert\PrivateAlertModuleResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PrivateAlertModuleResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Modules\Alert\ServerAlertModuleResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ServerAlertModuleResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Modules\Alert\UserAlertModuleResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UserAlertModuleResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Modules\ConfigureModuleResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ConfigureModuleResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Modules\InfoModuleResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>InfoModuleResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

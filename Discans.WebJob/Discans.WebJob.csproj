@@ -20,6 +20,22 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Discans.Shared\Discans.Shared.csproj" />
+    <ProjectReference Include="..\Discans\Discans.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\WebJobResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>WebJobResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\WebJobResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>WebJobResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

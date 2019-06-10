@@ -12,6 +12,7 @@ using Discans.Shared.Services;
 using Discans.Shared.DiscordServices;
 using Discans.Shared;
 using Discans.Shared.DiscordServices.CrawlerSites;
+using Discans.Resources;
 
 namespace Discans
 {
@@ -28,8 +29,12 @@ namespace Discans
             var client = new DiscordSocketClient();
             var services = ConfigureServices(client);
 
-            var context = services.GetRequiredService<AppDbContext>();
-            context.Database.Migrate();
+            using (var context = services.GetRequiredService<AppDbContext>())
+            {
+                context.Database.Migrate();
+                UserLocalizerService.Languages = await context.UserLocalizer.ToDictionaryAsync(x => x.UserId, x => x.Language);
+                ServerLocalizerService.Languages = await context.ServerLocalizer.ToDictionaryAsync(x => x.ServerId, x => x.Language);
+            }
 
             services.GetRequiredService<LogService>();
             await services.GetRequiredService<CommandHandling>().InitializeAsync(services);
@@ -38,24 +43,27 @@ namespace Discans
             await Task.Delay(-1);
         }
 
-        private IServiceProvider ConfigureServices(DiscordSocketClient client) => 
-            new ServiceCollection()
-                .AddSingleton(client)
-                .AddSingleton<CommandService>()
-                .AddSingleton<CommandHandling>()
-                .AddLogging()
-                .AddSingleton<LogService>()
-                .AddSingleton(_config)
-                .AddScoped<CrawlerService>()
-                .AddScoped<MangaUpdatesCrawlerService>()
-                .AddScoped<TuMangaCrawlerService>()
-                .AddScoped<MangaService>()
-                .AddScoped<PrivateAlertService>()
-                .AddScoped<UserAlertService>()
-                .AddScoped<ServerAlertService>()
-                .AddScoped<ChannelService>()
-                .AddDbContext<AppDbContext>(options => options.UseMySql(Helpers.EnvironmentVar(_config, "CONN")))
-                .BuildServiceProvider();
+        private IServiceProvider ConfigureServices(DiscordSocketClient client) => new ServiceCollection()
+            .AddSingleton(client)
+            .AddSingleton<CommandService>()
+            .AddSingleton<CommandHandling>()
+            .AddLogging()
+            .AddSingleton<LogService>()
+            .AddSingleton<LanguageService>()
+            .AddSingleton(typeof(LocaledResourceManager<>))
+            .AddSingleton(_config)
+            .AddScoped<CrawlerService>()
+            .AddScoped<MangaUpdatesCrawlerService>()
+            .AddScoped<TuMangaCrawlerService>()
+            .AddScoped<MangaService>()
+            .AddScoped<PrivateAlertService>()
+            .AddScoped<UserAlertService>()
+            .AddScoped<ServerAlertService>()
+            .AddScoped<ChannelService>()
+            .AddScoped<UserLocalizerService>()
+            .AddScoped<ServerLocalizerService>()
+            .AddDbContext<AppDbContext>(options => options.UseMySql(Helpers.EnvironmentVar(_config, "CONN")))
+            .BuildServiceProvider();
 
         private IConfiguration BuildConfig() =>
             new ConfigurationBuilder()

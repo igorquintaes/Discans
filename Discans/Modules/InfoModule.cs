@@ -1,18 +1,22 @@
 ﻿using System.Threading.Tasks;
+using Discans.Resources;
+using Discans.Resources.Modules;
 using Discord.Commands;
 
 namespace Discans.Modules
 {
     public class InfoModule : ModuleBase<SocketCommandContext>
     {
-        [Command("info")]
-        public Task Info()
-            => ReplyAsync(
-                $@"
-Olá! Eu sou a {Context.Client.CurrentUser.Username}! 
-Fui criada para te ajudar com alertas de novos capítulos em inglês.
+        private readonly LocaledResourceManager<InfoModuleResource> resourceManager;
+        public const string InfoCommand = "info";
 
-Você pode conferir todos os comandos disponíveis, como usar e o meu próprio código-fonte no GitHub:
-https://github.com/igorquintaes/Discans");
+        public InfoModule(LocaledResourceManager<InfoModuleResource> resourceManager) =>
+            this.resourceManager = resourceManager;
+
+        [Command(InfoCommand)]
+        public Task Info() => 
+            ReplyAsync(string.Format(resourceManager.GetString(
+                nameof(InfoModuleResource.InfoMessage)),
+                Context.Client.CurrentUser.Username));
     }
 }

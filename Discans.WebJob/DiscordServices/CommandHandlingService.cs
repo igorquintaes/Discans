@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Threading.Tasks;
-using Discans.Shared.DiscordServices;
+using Discans.Modules;
+using Discans.Shared.Database;
 using Discans.Shared.DiscordServices.CrawlerSites;
 using Discans.Shared.Models;
 using Discans.Shared.Services;
+using Discans.WebJob.Resources;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 
 namespace Discans.WebJob.Services
 {
@@ -23,6 +28,8 @@ namespace Discans.WebJob.Services
         private readonly MangaUpdatesCrawlerService mangaUpdatesService;
         private readonly TuMangaCrawlerService tuMangaService;
         private readonly IServiceProvider provider;
+        private readonly AppDbContext dbContext;
+        private readonly ResourceManager resourceManager;
 
         public CommandHandlingService(
             IServiceProvider provider, 
@@ -33,7 +40,8 @@ namespace Discans.WebJob.Services
             ChannelService channelService,
             ServerAlertService serverAlertService,
             MangaUpdatesCrawlerService mangaUpdatesService,
-            TuMangaCrawlerService tuMangaService)
+            TuMangaCrawlerService tuMangaService,
+            AppDbContext dbContext)
         {
             this.discord = discord;
             this.commands = commands;
@@ -44,8 +52,10 @@ namespace Discans.WebJob.Services
             this.mangaUpdatesService = mangaUpdatesService;
             this.tuMangaService = tuMangaService;
             this.provider = provider;
+            this.dbContext = dbContext;
 
             this.discord.Connected += Update;
+            resourceManager = new ResourceManager(typeof(WebJobResource));
         }
 
         public async Task InitializeAsync(IServiceProvider provider) =>
@@ -62,6 +72,9 @@ namespace Discans.WebJob.Services
             var mangas = await mangaService.GetAll();
             var mangaUpdatesReleases = mangaUpdatesService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
             var tuMangasReleases = tuMangaService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+
+            UserLocalizerService.Languages = await dbContext.UserLocalizer.ToDictionaryAsync(x => x.UserId, x => x.Language);
+            ServerLocalizerService.Languages = await dbContext.ServerLocalizer.ToDictionaryAsync(x => x.ServerId, x => x.Language);
 
             var allSitesRelease = new List<IEnumerable<IGrouping<int, Manga>>>()
             {
@@ -104,13 +117,18 @@ namespace Discans.WebJob.Services
         {
             try
             {
-                var message =
-$@"Temos um novo capítulo de `{mangaName}!`
-Capítulo lançado: {lastRelease}
-Informação obtida por {mangaSite.ToString()}";
+                var culture = CultureInfo.GetCultureInfo(UserLocalizerService.Languages.FirstOrDefault(x => x.Key == userId).Value ?? "en-US");
+                var message = string.Format(
+                    resourceManager.GetString(nameof(WebJobResource.NewRelease), culture),
+                    mangaName,
+                    lastRelease,
+                    mangaSite.ToString());
 
                 if (mangaSite == MangaSite.TuManga)
-                message += $"{Environment.NewLine}Link para ler online: https://tmofans.com/library/manga/{mangaSiteId}/discans";
+                    message += Environment.NewLine + 
+                               string.Format(resourceManager.GetString(
+                                      nameof(WebJobResource.ReadOnline), culture), 
+                                      "https://tmofans.com/library/manga/{mangaSiteId}/discans");
 
                 var channel = await discord.GetUser(userId).GetOrCreateDMChannelAsync();
                 await channel.SendMessageAsync(message);
@@ -129,13 +147,21 @@ Informação obtida por {mangaSite.ToString()}";
 
         private async Task SendServerMessage(string user, string mangaName, string lastRelease, ulong serverId, int mangaSiteId, MangaSite mangaSite)
         {
-            var message = $@"{user}
-Temos um novo capítulo de `{mangaName}!`
-Capítulo lançado: {lastRelease}
-Informação obtida por {mangaSite.ToString()}";
+
+            var culture = CultureInfo.GetCultureInfo(ServerLocalizerService.Languages.FirstOrDefault(x => x.Key == serverId).Value ?? "en-US");
+            var message = user + 
+                          Environment.NewLine + 
+                          string.Format(resourceManager.GetString(
+                                nameof(WebJobResource.NewRelease), culture),
+                                mangaName,
+                                lastRelease,
+                                mangaSite.ToString());
 
             if (mangaSite == MangaSite.TuManga)
-                message += $"{Environment.NewLine}Link para ler online: https://tmofans.com/library/manga/{mangaSiteId}/discans";
+                message += Environment.NewLine +
+                           string.Format(resourceManager.GetString(
+                                  nameof(WebJobResource.ReadOnline), culture),
+                                  "https://tmofans.com/library/manga/{mangaSiteId}/discans");
 
             if (discord.GetGuild(serverId) == null)
             {
@@ -156,18 +182,9 @@ Informação obtida por {mangaSite.ToString()}";
                 }
                 else
                 {
-                    message = $@"{user}
-Temos um novo capítulo de `{mangaName}!`
-Capítulo lançado: {lastRelease}
-Informação obtida por {mangaSite.ToString()}";
-
-                    if (mangaSite == MangaSite.TuManga)
-                        message += $"{Environment.NewLine}Link para ler online: https://tmofans.com/library/manga/{mangaSiteId}/discans";
-
-                    message += $@"
-
-Como não houve uma configuração de canal para eu mandar os alertas, estou mandando por aqui '-'
-O Administrador do grupo pode configurar o canal através do comando `channel`";
+                    message += Environment.NewLine + Environment.NewLine + string.Format(resourceManager.GetString(
+                                nameof(WebJobResource.NoChannel), culture),
+                                $"{Consts.BotCommand}{ConfigureModule.ChannelCommand}");
 
                     await discord
                         .GetGuild(serverId)

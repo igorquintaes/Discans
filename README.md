@@ -7,7 +7,8 @@ Discord bot to notify when manga chapter is released in english, based on online
 
 ## How to Use discans in your server
 - Invite Discans [using this url](https://discordapp.com/api/oauth2/authorize?client_id=556213286383648769&permissions=154624&scope=bot), or create and deploy your own version of the bot;
-- Open the channel that you want to receive Discans notifications and send `discans channel` keywords.
+- Open the channel that you want to receive Discans notifications and send `discans channel` keywords;
+- If you don't want to chat with Discans in english, you can change Discans language using the command `discans language [language in format xx-XX]`. We are supporting mainly two languages: `en-US` and `pt-BR`;
 - Now you can send commands for alert creation. You can check more about it above.
 
 ## Commands
@@ -16,6 +17,7 @@ Discord bot to notify when manga chapter is released in english, based on online
 | ------- | ----------- |
 | info | Discans introduce itself and says Github page url to user see all commands available. | 
 | channel | Set the default channel to receive user alerts or server alerts. |
+| language | Change discans language for DM or Discord Server. |
 | server-alert [url] | Creates an alert to @everyone when a new manga chapter be released in that Discord server. **Only an Admin can use that command.** | 
 | server-alert-remove [url] | Delete a server alert already registered to @everyone in that Discord server. **Only an Admin can use that command.** |
 | server-alert-remove-all | Remove manga's alerts in the Discord Server. It can be User Alerts or Server Alerts. **Only an Admin can use that command** and **has a confirmation message.** |
@@ -33,6 +35,7 @@ Discord bot to notify when manga chapter is released in english, based on online
 ```
 discans info
 discans channel
+discans language pt-BR
 discans server-alert https://www.mangaupdates.com/series.html?id=88
 discans server-alert-remove https://www.mangaupdates.com/series.html?id=88
 discans server-alert-remove-all

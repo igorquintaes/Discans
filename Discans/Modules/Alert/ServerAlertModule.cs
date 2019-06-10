@@ -1,12 +1,13 @@
 ﻿using Discans.Attributes;
 using Discans.Extensions;
+using Discans.Resources;
+using Discans.Resources.Modules.Alert;
 using Discans.Shared.Database;
 using Discans.Shared.DiscordServices;
 using Discans.Shared.Services;
 using Discord.Commands;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Discans.Modules.Alert
@@ -18,125 +19,104 @@ namespace Discans.Modules.Alert
         private readonly UserAlertService userAlertService;
         private readonly CrawlerService crawlerService;
         private readonly AppDbContext dbContext;
+        private readonly LocaledResourceManager<ServerAlertModuleResource> resourceManager;
+
+        public const string AlertCommand = "server-alert";
+        public const string AlertRemoveCommand = "server-alert-remove";
+        public const string AlertRemoveAllConfirmCommand = "server-alert-remove-all-confirm";
+        public const string AlertRemoveAllCommand = "server-alert-remove-all";
+        public const string AlertListCommand = "server-alert-list";
+        public const string AlertListAllCommand = "server-alert-list all";
 
         public ServerAlertModule(
             MangaService mangaService,
             ServerAlertService serverAlertService,
             UserAlertService userAlertService,
             CrawlerService crawlerService,
-            AppDbContext dbContext)
+            AppDbContext dbContext,
+            LocaledResourceManager<ServerAlertModuleResource> resourceManager)
         {
             this.mangaService = mangaService;
             this.serverAlertService = serverAlertService;
             this.userAlertService = userAlertService;
             this.crawlerService = crawlerService;
             this.dbContext = dbContext;
+            this.resourceManager = resourceManager;
         }
 
-        [Command("server-alert"), Admin]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
+        [Command(AlertCommand), Admin, ValidLink]
+        [LocaledRequireContext(ContextType.Guild)]
         public async Task ServerAlert(string link)
         {
-            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
-            if (!isLinkValid)
-            {
-                await ReplyAsync("Link inválido! T_T");
-                return;
-            }
-
+            var mangaCrawlerService = crawlerService.SiteCrawler;
             var mangaId = mangaCrawlerService.GetMangaId();
             var mangaName = mangaCrawlerService.GetMangaName();
             var lastRelease = mangaCrawlerService.GetLastChapter();
             var manga = await mangaService.GetOrCreateIfNew(mangaId, lastRelease, mangaName, mangaCrawlerService.MangaSite);
 
-            await serverAlertService.Create(
-                serverId: Context.Guild.Id,
-                manga: manga);
-
+            await serverAlertService.Create(Context.Guild.Id, manga);
             await dbContext.SaveChangesAsync();
-            var resposta = new StringBuilder();
-            resposta.AppendLine("Beleza, tá anotado!");
-            resposta.AppendLine("Assim que sair um capítulo novo eu aviso!");
-            resposta.AppendLine("");
-
-            resposta.AppendLine($@"Esse cadastro envolve as seguintes informações:
-```ini
-Nome do mangá: [{mangaName}]
-Quem será alertado: [Todos do servidor]
-Último capítulo lançado: [{lastRelease}]
-Fonte de consulta: [{mangaCrawlerService.MangaSite.ToString()}]
-```");
-
-            await ReplyAsync(resposta.ToString());
+            await ReplyAsync(string.Format(resourceManager.GetString(
+                nameof(ServerAlertModuleResource.ServerAlertSuccess)),
+                manga.Name,
+                manga.LastRelease,
+                mangaCrawlerService.MangaSite.ToString()));
         }
 
-        [Command("server-alert-remove"), Admin]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
+        [Command(AlertRemoveCommand), Admin, ValidLink]
+        [LocaledRequireContext(ContextType.Guild)]
         public async Task ServerAlertRemove(string link)
         {
-            var (isLinkValid, mangaCrawlerService) = await crawlerService.LoadPageAsync(link);
-            if (!isLinkValid)
-            {
-                await ReplyAsync("Link inválido! T_T");
-                return;
-            }
-
-            // todo: change mangaID
+            var mangaCrawlerService = crawlerService.SiteCrawler;
             var mangaSiteId = mangaCrawlerService.GetMangaId();
             await serverAlertService.Remove(Context.Guild.Id, mangaSiteId, mangaCrawlerService.MangaSite);
             await dbContext.SaveChangesAsync();
-            await ReplyAsync("O servidor foi desvinculado do projeto.");
+            await ReplyAsync(resourceManager.GetString(
+                nameof(ServerAlertModuleResource.ServerAlertRemoveSuccess)));
         }
 
-        [Command("server-alert-remove-all TENHO CERTEZA"), Admin]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
-        public async Task ServerAlertRemoveAll()
+        [Command(AlertRemoveAllConfirmCommand), Admin]
+        [LocaledRequireContext(ContextType.Guild)]
+        public async Task ServerAlertRemoveAllConfirm()
         {
             await serverAlertService.Remove(Context.Guild.Id);
             await userAlertService.Remove(Context.Guild.Id);
             await dbContext.SaveChangesAsync();
-            await ReplyAsync("Todos os projetos e usuários foram desvinculados deste servidor. Sentirei a sua falta T_T");
+            await ReplyAsync(resourceManager.GetString(
+                nameof(ServerAlertModuleResource.ServerAlertRemoveAllConfirmSuccess)));
         }
 
-        [Command("server-alert-remove-all"), Admin]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
-        public async Task ServerAlertRemoveAllUnconfirm()
-        {
-            await ReplyAsync("Mano, isso vai remover TODOS os alertas do seu servidor. Tem certeza? " +
-                "Se você estiver certo disso, escreva `server-alert-remove-all TENHO CERTEZA`");
-        }
+        [Command(AlertRemoveAllCommand), Admin]
+        [LocaledRequireContext(ContextType.Guild)]
+        public async Task ServerAlertRemoveAll() => 
+            await ReplyAsync(resourceManager.GetString(
+                nameof(ServerAlertModuleResource.ServerAlertRemoveAllMessage)));
 
-        [Command("server-alert-list")]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
+        [Command(AlertListCommand)]
+        [LocaledRequireContext(ContextType.Guild)]
         public async Task ServerAlertList()
         {
             var alerts = await serverAlertService.Get(Context.Guild.Id);
-
             if (!alerts.Any())
             {
-                await ReplyAsync("Não tem nenhum alerta para todos deste servidor :/");
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(ServerAlertModuleResource.ServerAlertListEmpty)));
                 return;
             }
 
-            var alertMessages = alerts.Select(x => {
-                var text =
-$@"```ini
-Mangá: [{x.Manga.Name}]
-Último lançamento: [{x.Manga.LastRelease}]
-Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
-```";
-                return text;
-            });
+            var alertMessages = alerts.Select(x => string.Format(resourceManager.GetString(
+                    nameof(ServerAlertModuleResource.ServerAlertListMessageItem)), 
+                    x.Manga.Name, 
+                    x.Manga.LastRelease,
+                    x.Manga.MangaSite.ToString()));
 
-            await ReplyAsync($@"Alertas configurados diretamente para o servidor {Context.Guild.Name}:");
-            var alertChuncks = alertMessages.ToList().ChunkList(10);
-
-            foreach (var alertChunck in alertChuncks)
+            await ReplyAsync(resourceManager.GetString(nameof(ServerAlertModuleResource.ServerAlertListMessageHeader)));
+            foreach (var alertChunck in alertMessages.ToList().ChunkList(10))
                 await ReplyAsync(string.Join(Environment.NewLine, alertChunck));
         }
 
-        [Command("server-alert-list-all")]
-        [RequireContext(ContextType.Guild, ErrorMessage = "Só posso usar esse comando em um servidor >_>'")]
+        [Command(AlertListAllCommand)]
+        [LocaledRequireContext(ContextType.Guild)]
         public async Task ServerAlertListAll()
         {
             var serverAlerts = await serverAlertService.Get(Context.Guild.Id);
@@ -144,38 +124,28 @@ Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
 
             if (!serverAlerts.Any() && !userAlerts.Any())
             {
-                await ReplyAsync("Não tem nenhum alerta para todos deste servidor :/");
+                await ReplyAsync(resourceManager.GetString(
+                    nameof(ServerAlertModuleResource.ServerAlertListAllEmpty)));
                 return;
             }
 
-            var serverAlertMessages = serverAlerts.Select(x => {
-                var text =
-$@"```ini
-Mangá: [{x.Manga.Name}]
-Quem será marcado: [todos de '{Context.Guild.Name}']
-Último lançamento: [{x.Manga.LastRelease}]
-Fonte de consulta: [{x.Manga.MangaSite.ToString()}]
-```";
-                return text;
-            });
+            var serverAlertMessages = serverAlerts.Select(x => string.Format(resourceManager.GetString(
+                nameof(ServerAlertModuleResource.ServerAlertListAllMessageItem)),
+                x.Manga.Name,
+                Context.Guild.Name,
+                x.Manga.LastRelease,
+                x.Manga.MangaSite.ToString()));
 
-            var userAlertMessages = userAlerts.GroupBy(x => x.Manga.Id).Select(x => {
-                var text =
-$@"```ini
-Mangá: [{x.First().Manga.Name}]
-Quem será marcado: [{string.Join(", ",  
-                            x.Select(alert => Context.Guild.Users.FirstOrDefault(y => y.Id == alert.UserId)?.Username 
-                            ?? "usuário que saiu do servidor"))}]
-Último lançamento: [{x.First().Manga.LastRelease}]
-Fonte de consulta: [{x.First().Manga.MangaSite.ToString()}]
-```";
-                return text;
-            });
+            var userAlertMessages = userAlerts.GroupBy(x => x.Manga.Id).Select(x => string.Format(resourceManager.GetString(
+                nameof(ServerAlertModuleResource.ServerAlertListAllMessageItem)),
+                x.First().Manga.Name,
+                string.Join(", ", x.Select(alert => Context.Guild.Users.FirstOrDefault(y => y.Id == alert.UserId)?.Username)
+                                   .Where(y => y != null)),
+                x.First().Manga.LastRelease,
+                x.First().Manga.MangaSite.ToString()));
             
-            await ReplyAsync($@"Abaixo a lista de todos os alertas configurados:");
-            var alertChuncks = serverAlertMessages.Concat(userAlertMessages).ToList().ChunkList(7);
-
-            foreach (var alertChunck in alertChuncks)
+            await ReplyAsync(resourceManager.GetString(nameof(ServerAlertModuleResource.ServerAlertListAllMessageHeader)));
+            foreach (var alertChunck in serverAlertMessages.Concat(userAlertMessages).ToList().ChunkList(7))
                 await ReplyAsync(string.Join(Environment.NewLine, alertChunck));
         }
     }
