@@ -11,10 +11,10 @@ namespace Discans.Shared.Services
         public ChannelService(AppDbContext context) => 
             this.context = context;
 
-        public async Task<ServerChannel> GetByServerId(ulong serverId) =>
+        public virtual async Task<ServerChannel> GetByServerId(ulong serverId) =>
             await context.ServerChannels.FindAsync(serverId);
 
-        public async Task SaveOrUpdate(ulong serverId, ulong channelId)
+        public virtual async Task SaveOrUpdate(ulong serverId, ulong channelId)
         {
             var serverChannel = await GetByServerId(serverId);
             if (serverChannel == null)

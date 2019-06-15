@@ -15,8 +15,8 @@ namespace Discans.Modules
         { }
 
         [Command(InfoCommand)]
-        public virtual Task Info() => 
-            ReplyAsync(string.Format(ResourceManager.GetString(
-                nameof(InfoModuleResource.InfoMessage)), CurrentUserName));
+        public async Task Info() => 
+            await ReplyAsync(string.Format(ResourceManager.GetString(
+                nameof(InfoModuleResource.InfoMessage)), AppUserName));
     }
 }

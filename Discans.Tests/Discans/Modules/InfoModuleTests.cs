@@ -2,52 +2,64 @@
 using Discans.Modules;
 using Discans.Resources;
 using Discans.Resources.Modules;
+using Discans.Tests.Extensions;
 using FakeItEasy;
+using FluentAssertions;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace Discans.Tests.Discans.Modules
 {
-    public class InfoModuleTests
+    public class InfoModuleTests : BaseTests
     {
-        protected InfoModule InfoModule;
+        protected InfoModule Module;
         protected LocaledResourceManager<InfoModuleResource> LocaledResourceManager;
 
         [SetUp]
-        public void BaseSetUp()
+        public void HierarchySetUp()
         {
             LocaledResourceManager = A.Fake<LocaledResourceManager<InfoModuleResource>>();
-            InfoModule = A.Fake<InfoModule>(x => x.WithArgumentsForConstructor(new[] { LocaledResourceManager }));
+            Module = A.Fake<InfoModule>(x => x.WithArgumentsForConstructor(new[] { LocaledResourceManager }));
         }
 
         public class InfoTests : InfoModuleTests
         {
-            [SetUp]
-            public void SetUp() => 
-                A.CallTo(() => InfoModule.Info()).CallsBaseMethod();
+            [Test]
+            public void ShouldBeDiscordCommand() =>
+                Module.GetType().Should().BeCommand(
+                    methodName: nameof(Module.Info),
+                    commandName: InfoModule.InfoCommand);
 
             [Test]
-            public void ShouldGetExpectedResource()
+            public void ShouldNotBeAdminRestrict() =>
+                Module.GetType().Should().NotBeAdminRestrict(
+                    methodName: nameof(Module.Info));
+
+            [Test]
+            public async Task ShouldGetExpectedResource()
             {
-                InfoModule.Info();
+                await Module.Info();
                 A.CallTo(() => LocaledResourceManager.GetString(nameof(InfoModuleResource.InfoMessage)))
                     .MustHaveHappenedOnceExactly();
             }
 
             [Test]
-            public void ShouldSendExpectedMessage()
+            public async Task ShouldSendExpectedResourceAsReply()
             {
                 const string expectedMessage = "a message {0}";
-                var expectedUserName = new Faker().Person.FirstName;
+                var expectedUserName = Faker.Person.FirstName;
                 var expectedResult = $"a message {expectedUserName}";
 
                 A.CallTo(() => LocaledResourceManager.GetString(nameof(InfoModuleResource.InfoMessage)))
                     .Returns(expectedMessage);
-
-                A.CallTo(() => InfoModule.CurrentUserName)
+                A.CallTo(() => Module.AppUserName)
                     .Returns(expectedUserName);
 
-                InfoModule.Info();
-                A.CallTo(() => InfoModule.ReplyAsync(expectedResult, false, null, null))
+                await Module.Info();
+
+                A.CallTo(() => LocaledResourceManager.GetString(nameof(InfoModuleResource.InfoMessage)))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(() => Module.ReplyAsync(expectedResult, false, null, null))
                     .MustHaveHappenedOnceExactly();
             }
         }

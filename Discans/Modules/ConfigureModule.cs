@@ -1,4 +1,5 @@
 ﻿using Discans.Attributes;
+using Discans.Modules.Base;
 using Discans.Resources;
 using Discans.Resources.Modules;
 using Discans.Shared.Database;
@@ -12,13 +13,12 @@ using System.Threading.Tasks;
 
 namespace Discans.Modules
 {
-    public class ConfigureModule : ModuleBase<SocketCommandContext>
+    public class ConfigureModule : ProjectModuleBase<ConfigureModuleResource>
     {
         private readonly ChannelService channelService;
         private readonly UserLocalizerService userLocalizerService;
         private readonly ServerLocalizerService serverLocalizerService;
         private readonly AppDbContext dbContext;
-        private readonly LocaledResourceManager<ConfigureModuleResource> resourceManager;
 
         public const string ChannelCommand = "channel";
         public const string LanguageCommand = "language";
@@ -29,21 +29,21 @@ namespace Discans.Modules
             ServerLocalizerService serverLocalizerService,
             AppDbContext dbContext,
             LocaledResourceManager<ConfigureModuleResource> resourceManager)
+            : base (resourceManager)
         {
             this.channelService = channelService;
             this.userLocalizerService = userLocalizerService;
             this.serverLocalizerService = serverLocalizerService;
             this.dbContext = dbContext;
-            this.resourceManager = resourceManager;
         }
 
         [Command(ChannelCommand), Admin]
         [LocaledRequireContext(ContextType.Guild)]
         public async Task Channel()
         {
-            await channelService.SaveOrUpdate(Context.Guild.Id, Context.Channel.Id);
+            await channelService.SaveOrUpdate(GuildId, ChannelId);
             await dbContext.SaveChangesAsync();
-            await ReplyAsync(resourceManager.GetString(
+            await ReplyAsync(ResourceManager.GetString(
                 nameof(ConfigureModuleResource.ChannelSuccess)));
         }
 
@@ -53,7 +53,7 @@ namespace Discans.Modules
         {
             if (!LanguageService.AllowedLanguages.Contains(language))
             {
-                await ReplyAsync(string.Format(resourceManager.GetString(
+                await ReplyAsync(string.Format(ResourceManager.GetString(
                     nameof(ConfigureModuleResource.LanguageUnsupported)),
                     string.Join(Environment.NewLine, LanguageService.AllowedLanguages)));
                 return;
@@ -65,7 +65,7 @@ namespace Discans.Modules
                 await userLocalizerService.CreateOrUpdate(Context.User.Id, language);
 
             await dbContext.SaveChangesAsync(); 
-            await ReplyAsync(resourceManager.GetString(
+            await ReplyAsync(ResourceManager.GetString(
                 nameof(ConfigureModuleResource.LanguageUpdated), CultureInfo.GetCultureInfo(language)));
         }
     }
