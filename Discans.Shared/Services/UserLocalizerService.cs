@@ -17,7 +17,7 @@ namespace Discans.Shared.Services
         public UserLocalizerService(AppDbContext context) => 
             this.context = context;
 
-        public async Task CreateOrUpdate(ulong userId, string language)
+        public virtual async Task CreateOrUpdate(ulong userId, string language)
         {
             if (!Languages.Any(x => x.Key == userId))
             {

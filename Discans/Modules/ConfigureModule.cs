@@ -39,7 +39,7 @@ namespace Discans.Modules
 
         [Command(ChannelCommand), Admin]
         [LocaledRequireContext(ContextType.Guild)]
-        public async Task Channel()
+        public async Task SetChannel()
         {
             await channelService.SaveOrUpdate(GuildId, ChannelId);
             await dbContext.SaveChangesAsync();
@@ -59,10 +59,10 @@ namespace Discans.Modules
                 return;
             }
 
-            if (Context.Channel is IGuildChannel)
-                await serverLocalizerService.CreateOrUpdate(Context.Guild.Id, language);
+            if (Channel is IGuildChannel)
+                await serverLocalizerService.CreateOrUpdate(GuildId, language);
             else
-                await userLocalizerService.CreateOrUpdate(Context.User.Id, language);
+                await userLocalizerService.CreateOrUpdate(UserId, language);
 
             await dbContext.SaveChangesAsync(); 
             await ReplyAsync(ResourceManager.GetString(

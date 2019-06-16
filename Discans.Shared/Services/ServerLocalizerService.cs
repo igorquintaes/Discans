@@ -17,7 +17,7 @@ namespace Discans.Shared.Services
         public ServerLocalizerService(AppDbContext context) =>
             this.context = context;
 
-        public async Task CreateOrUpdate(ulong serverId, string language)
+        public virtual async Task CreateOrUpdate(ulong serverId, string language)
         {
             if (!Languages.Any(x => x.Key == serverId))
             {

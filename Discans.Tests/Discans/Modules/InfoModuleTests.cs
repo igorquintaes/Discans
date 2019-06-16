@@ -46,20 +46,15 @@ namespace Discans.Tests.Discans.Modules
             [Test]
             public async Task ShouldSendExpectedResourceAsReply()
             {
-                const string expectedMessage = "a message {0}";
-                var expectedUserName = Faker.Person.FirstName;
-                var expectedResult = $"a message {expectedUserName}";
-
+                var resourceMessage = Faker.Lorem.Paragraph();
                 A.CallTo(() => LocaledResourceManager.GetString(nameof(InfoModuleResource.InfoMessage)))
-                    .Returns(expectedMessage);
-                A.CallTo(() => Module.AppUserName)
-                    .Returns(expectedUserName);
+                    .Returns(resourceMessage);
 
                 await Module.Info();
 
                 A.CallTo(() => LocaledResourceManager.GetString(nameof(InfoModuleResource.InfoMessage)))
                     .MustHaveHappenedOnceExactly();
-                A.CallTo(() => Module.ReplyAsync(expectedResult, false, null, null))
+                A.CallTo(() => Module.ReplyAsync(A<string>.That.Contains(resourceMessage)))
                     .MustHaveHappenedOnceExactly();
             }
         }
