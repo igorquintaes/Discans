@@ -228,17 +228,15 @@ namespace Discans.Tests.Discans.Modules
                     [Test]
                     public async Task ShouldSendExpectedResourceAsReply()
                     {
+                        var resourceName = nameof(ConfigureModuleResource.LanguageUpdated);
+                        var resourceCulture = CultureInfo.GetCultureInfo(language);
                         var resourceMessage = Faker.Lorem.Paragraph();
-                        A.CallTo(() => LocaledResourceManager.GetString(
-                                nameof(ConfigureModuleResource.LanguageUpdated),
-                                CultureInfo.GetCultureInfo(language)))
+                        A.CallTo(() => LocaledResourceManager.GetString(resourceName, resourceCulture))
                             .Returns(resourceMessage);
 
                         await Module.Language(language);
 
-                        A.CallTo(() => LocaledResourceManager.GetString(
-                                nameof(ConfigureModuleResource.LanguageUpdated),
-                                CultureInfo.GetCultureInfo(language)))
+                        A.CallTo(() => LocaledResourceManager.GetString(resourceName, resourceCulture))
                             .MustHaveHappenedOnceExactly();
                         A.CallTo(() => Module.ReplyAsync(A<string>.That.Contains(resourceMessage)))
                             .MustHaveHappenedOnceExactly();
@@ -280,17 +278,15 @@ namespace Discans.Tests.Discans.Modules
                     [Test]
                     public async Task ShouldSendExpectedResourceAsReply()
                     {
+                        var resourceName = nameof(ConfigureModuleResource.LanguageUpdated);
+                        var resourceCulture = CultureInfo.GetCultureInfo(language);
                         var resourceMessage = Faker.Lorem.Paragraph();
-                        A.CallTo(() => LocaledResourceManager.GetString(
-                                nameof(ConfigureModuleResource.LanguageUpdated), 
-                                CultureInfo.GetCultureInfo(language)))
+                        A.CallTo(() => LocaledResourceManager.GetString(resourceName, resourceCulture))
                             .Returns(resourceMessage);
 
                         await Module.Language(language);
 
-                        A.CallTo(() => LocaledResourceManager.GetString(
-                                nameof(ConfigureModuleResource.LanguageUpdated), 
-                                CultureInfo.GetCultureInfo(language)))
+                        A.CallTo(() => LocaledResourceManager.GetString(resourceName, resourceCulture))
                             .MustHaveHappenedOnceExactly();
                         A.CallTo(() => Module.ReplyAsync(A<string>.That.Contains(resourceMessage)))
                             .MustHaveHappenedOnceExactly();
