@@ -1,8 +1,10 @@
 ﻿using Discans.Shared.Models;
 using Discans.Shared.ViewModels;
 using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 
 namespace Discans.Shared.DiscordServices.CrawlerSites
@@ -18,7 +20,32 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
 
         public IEnumerable<MangaRelease> LastMangaReleases()
         {
-            var document = new HtmlWeb().Load("https://unionmangas.top");
+            var result = default(string);
+
+            var baseAddress = new Uri("https://unionmangas.top/i");
+            var cookieContainer = new CookieContainer();
+            var handler = new HttpClientHandler() { CookieContainer = cookieContainer };
+            cookieContainer.Add(baseAddress, new Cookie("__cfduid", "d3692fd2f6b7a4f4377c37a71dab479921562685336"));
+
+            using (var httpClient = new HttpClient(handler))
+            {
+
+                httpClient.DefaultRequestHeaders.Add("cache-control", "no-cache");
+                httpClient.DefaultRequestHeaders.Add("x-requested-with", "XMLHttpRequest");
+                httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36");
+                httpClient.DefaultRequestHeaders.Add("origin", "https://unionmangas.top/i");
+                httpClient.DefaultRequestHeaders.Add("accept-language", "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7");
+                httpClient.DefaultRequestHeaders.Add("accept", "*/*");
+
+                result = httpClient.GetAsync(baseAddress)
+                    .GetAwaiter().GetResult()
+                    .Content.ReadAsStringAsync()
+                    .GetAwaiter().GetResult();
+            }
+
+            var document = new HtmlDocument();
+            document.LoadHtml(result);
+
             var mangas = new List<MangaRelease>();
             var nodes = document.DocumentNode.SelectNodes("//div[@class='row' and @style='margin-bottom: 10px;' and .//a[@class='link-titulo']]").ToList();
             for (var i = 0; i < nodes.Count; i++)

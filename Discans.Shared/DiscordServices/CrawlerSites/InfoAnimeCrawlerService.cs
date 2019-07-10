@@ -44,39 +44,30 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
             for (var i = 0; i < nodes.Count; i++)
             {
                 var mangaSiteId = HtmlEntity.DeEntitize(document.DocumentNode
-                    .SelectSingleNode($"//td[2]/a")
+                    .SelectSingleNode($"(//tr[./td])[{i + 1}]/td[2]/a")
                     .GetAttributeValue("href", "")
                     .Replace("dados?", ""));
 
                 var lastRelease = HtmlEntity.DeEntitize(document.DocumentNode
-                        .SelectSingleNode("//td[4]")
+                        .SelectSingleNode($"(//tr[./td])[{i + 1}]/td[4]")
                         .InnerText)
                     .Trim();
 
                 var scanName = HtmlEntity.DeEntitize(document.DocumentNode
-                        .SelectSingleNode("//td[5]/a")
+                        .SelectSingleNode($"(//tr[./td])[{i + 1}]/td[5]/a")
                         .InnerText)
                     .Trim();
 
-                var infoAnimesScanLink = HtmlEntity.DeEntitize(document.DocumentNode
-                        .SelectSingleNode("//td[5]/a")
+                var scanLink = HtmlEntity.DeEntitize(document.DocumentNode
+                        .SelectSingleNode($"(//tr[./td])[{i + 1}]/td[5]/a")
                         .GetAttributeValue("href", ""))
                     .Trim();
-
-                var scanLink = HtmlEntity.DeEntitize(new HtmlWeb()
-                        .Load($"https://www.infoanime.com.br/{infoAnimesScanLink}")
-                        .DocumentNode.SelectSingleNode("//a[./img]")
-                         ?.GetAttributeValue("href", ""))
-                    ?.Trim();
-
-                if (string.IsNullOrWhiteSpace(scanLink))
-                    scanLink = $"https://www.google.com/search?q={scanName.Replace(" ", "+")}+{mangaSiteId.Replace("-", "+")}";
 
                 mangas.Add(new MangaRelease(
                     mangaSiteId: mangaSiteId,
                     name: default,
                     lastRelease: lastRelease,
-                    mangaSite: MangaSite.UnionMangas,
+                    mangaSite: MangaSite,
                     scanName: scanName,
                     scanLink: scanLink));
             }

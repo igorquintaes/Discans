@@ -61,6 +61,15 @@ namespace Discans.WebJob.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check it online url: {0}.
+        /// </summary>
+        internal static string CheckItOnline {
+            get {
+                return ResourceManager.GetString("CheckItOnline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is a new release of `{0}`!
         ///Chapter released: {1}
         ///Info by: {2}.
@@ -81,11 +90,14 @@ namespace Discans.WebJob.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Read online url: {0}.
+        ///   Looks up a localized string similar to 
+        ///
+        ///This release was translated by `{0}` group.
+        ///Follow and support its work: {1}.
         /// </summary>
-        internal static string ReadOnline {
+        internal static string ScanInfo {
             get {
-                return ResourceManager.GetString("ReadOnline", resourceCulture);
+                return ResourceManager.GetString("ScanInfo", resourceCulture);
             }
         }
     }
