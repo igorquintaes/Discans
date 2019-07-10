@@ -138,8 +138,8 @@ namespace Discans.WebJob.Services
 
                 if (mangaRelease.MangaSite == MangaSite.UnionMangas)
                 {
-                    message += $"{Environment.NewLine}Link para ler online: https://unionmangas.top/manga/{mangaRelease.MangaSiteId}";
-                    message += $"{Environment.NewLine}Esse capítulo foi trabalhado e disponibilizado pelo grupo `{mangaRelease.ScanName}`";
+                    message += $"{Environment.NewLine}Você pode ler online por aqui: https://unionmangas.top/manga/{mangaRelease.MangaSiteId}";
+                    message += $"{Environment.NewLine}{Environment.NewLine}Esse capítulo foi traduzido e disponibilizado pelo grupo `{mangaRelease.ScanName}`";
                     message += $"{Environment.NewLine}Acompanhe e apoie o trabalho deles: {mangaRelease.ScanLink}";
                 }
 
