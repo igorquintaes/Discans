@@ -11,6 +11,7 @@ using Discans.Shared.DiscordServices.CrawlerSites;
 using Discans.Shared.Models;
 using Discans.Shared.Services;
 using Discans.WebJob.Resources;
+using Discans.Shared.ViewModels;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace Discans.WebJob.Services
         private readonly ChannelService channelService;
         private readonly ServerAlertService serverAlertService;
         private readonly MangaUpdatesCrawlerService mangaUpdatesService;
+        private readonly UnionMangasCrawlerService unionMangasService;
         private readonly TuMangaCrawlerService tuMangaService;
         private readonly IServiceProvider provider;
         private readonly AppDbContext dbContext;
@@ -40,6 +42,7 @@ namespace Discans.WebJob.Services
             ChannelService channelService,
             ServerAlertService serverAlertService,
             MangaUpdatesCrawlerService mangaUpdatesService,
+            UnionMangasCrawlerService unionMangasService,
             TuMangaCrawlerService tuMangaService,
             AppDbContext dbContext)
         {
@@ -50,6 +53,7 @@ namespace Discans.WebJob.Services
             this.channelService = channelService;
             this.serverAlertService = serverAlertService;
             this.mangaUpdatesService = mangaUpdatesService;
+            this.unionMangasService = unionMangasService;
             this.tuMangaService = tuMangaService;
             this.provider = provider;
             this.dbContext = dbContext;
@@ -72,14 +76,16 @@ namespace Discans.WebJob.Services
             var mangas = await mangaService.GetAll();
             var mangaUpdatesReleases = mangaUpdatesService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
             var tuMangasReleases = tuMangaService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+            var unionMangasReleases = unionMangasService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
 
             UserLocalizerService.Languages = await dbContext.UserLocalizer.ToDictionaryAsync(x => x.UserId, x => x.Language);
             ServerLocalizerService.Languages = await dbContext.ServerLocalizer.ToDictionaryAsync(x => x.ServerId, x => x.Language);
 
-            var allSitesRelease = new List<IEnumerable<IGrouping<int, Manga>>>()
+            var allSitesRelease = new List<IEnumerable<IGrouping<string, MangaRelease>>>()
             {
                 mangaUpdatesReleases,
-                tuMangasReleases
+                tuMangasReleases,
+                unionMangasReleases
             };
 
             foreach (var siteRelease in allSitesRelease)
@@ -96,24 +102,24 @@ namespace Discans.WebJob.Services
 
                     foreach (var serverAlert in manga.ServerAlerts.GroupBy(x => x.ServerId))
                     {
-                        await SendServerMessage("@everyone", manga.Name, mangaSiteRelease.LastRelease, serverAlert.Key, manga.MangaSiteId, manga.MangaSite);
+                        await SendServerMessage("@everyone", manga.Name, serverAlert.Key, mangaSiteRelease);
                     }
 
                     foreach (var userAlert in manga.UserAlerts.GroupBy(x => x.ServerId))
                     {
                         var users = string.Join(", ", userAlert.Select(x => $"<@{x.UserId}>"));
-                        await SendServerMessage(users, manga.Name, mangaSiteRelease.LastRelease, userAlert.Key, manga.MangaSiteId, manga.MangaSite);
+                        await SendServerMessage(users, manga.Name, userAlert.Key, mangaSiteRelease);
                     }
 
                     foreach (var privateAlert in manga.PrivateAlerts)
                     {
-                        await SendPrivateMessage(privateAlert.UserId, manga.Name, manga.LastRelease, manga.MangaSiteId, manga.MangaSite);
+                        await SendPrivateMessage(privateAlert.UserId, manga.Name, mangaSiteRelease);
                     }
                 }
             }
         }
 
-        private async Task SendPrivateMessage(ulong userId, string mangaName, string lastRelease, int mangaSiteId, MangaSite mangaSite)
+        private async Task SendPrivateMessage(ulong userId, string mangaName, MangaRelease mangaRelease)
         {
             try
             {
@@ -121,14 +127,21 @@ namespace Discans.WebJob.Services
                 var message = string.Format(
                     resourceManager.GetString(nameof(WebJobResource.NewRelease), culture),
                     mangaName,
-                    lastRelease,
-                    mangaSite.ToString());
+                    mangaRelease.LastRelease,
+                    mangaRelease.MangaSite.ToString());
 
-                if (mangaSite == MangaSite.TuManga)
+                if (mangaRelease.MangaSite == MangaSite.TuManga)
                     message += Environment.NewLine + 
                                string.Format(resourceManager.GetString(
                                       nameof(WebJobResource.ReadOnline), culture), 
                                       "https://tmofans.com/library/manga/{mangaSiteId}/discans");
+
+                if (mangaRelease.MangaSite == MangaSite.UnionMangas)
+                {
+                    message += $"{Environment.NewLine}Você pode ler online por aqui: https://unionmangas.top/manga/{mangaRelease.MangaSiteId}";
+                    message += $"{Environment.NewLine}{Environment.NewLine}Esse capítulo foi traduzido e disponibilizado pelo grupo `{mangaRelease.ScanName}`";
+                    message += $"{Environment.NewLine}Acompanhe e apoie o trabalho deles: {mangaRelease.ScanLink}";
+                }
 
                 var channel = await discord.GetUser(userId).GetOrCreateDMChannelAsync();
                 await channel.SendMessageAsync(message);
@@ -145,23 +158,29 @@ namespace Discans.WebJob.Services
             }
         }
 
-        private async Task SendServerMessage(string user, string mangaName, string lastRelease, ulong serverId, int mangaSiteId, MangaSite mangaSite)
+        private async Task SendServerMessage(string user, string mangaName, ulong serverId, MangaRelease mangaRelease)
         {
-
             var culture = CultureInfo.GetCultureInfo(ServerLocalizerService.Languages.FirstOrDefault(x => x.Key == serverId).Value ?? "en-US");
             var message = user + 
                           Environment.NewLine + 
                           string.Format(resourceManager.GetString(
                                 nameof(WebJobResource.NewRelease), culture),
                                 mangaName,
-                                lastRelease,
-                                mangaSite.ToString());
+                                mangaRelease.LastRelease,
+                                mangaRelease.MangaSite.ToString());
 
-            if (mangaSite == MangaSite.TuManga)
+            if (mangaRelease.MangaSite == MangaSite.TuManga)
                 message += Environment.NewLine +
                            string.Format(resourceManager.GetString(
                                   nameof(WebJobResource.ReadOnline), culture),
                                   "https://tmofans.com/library/manga/{mangaSiteId}/discans");
+
+            if (mangaRelease.MangaSite == MangaSite.UnionMangas)
+            {
+                message += $"{Environment.NewLine}Você pode ler online por aqui: https://unionmangas.top/manga/{mangaRelease.MangaSiteId}";
+                message += $"{Environment.NewLine}{Environment.NewLine}Esse capítulo foi traduzido e disponibilizado pelo grupo `{mangaRelease.ScanName}`";
+                message += $"{Environment.NewLine}Acompanhe e apoie o trabalho deles: {mangaRelease.ScanLink}";
+            }
 
             if (discord.GetGuild(serverId) == null)
             {

@@ -70,7 +70,7 @@ namespace Discans.Shared.Services
             dbContext.UserAlerts.RemoveRange(alerts);
         }
 
-        public async Task Remove(ulong serverId, IEnumerable<ulong> userIds, int mangaSiteId, MangaSite mangaSite)
+        public async Task Remove(ulong serverId, IEnumerable<ulong> userIds, string mangaSiteId, MangaSite mangaSite)
         {
             var alerts = await dbContext
                 .UserAlerts

@@ -11,7 +11,7 @@ namespace Discans.Shared.Models
             PrivateAlerts = new List<PrivateAlert>();
         }
 
-        public Manga(int mangaSiteId, string name, string lastRelease, MangaSite mangaSite) : this()
+        public Manga(string mangaSiteId, string name, string lastRelease, MangaSite mangaSite) : this()
         {
             MangaSiteId = mangaSiteId;
             Name = name;
@@ -23,7 +23,7 @@ namespace Discans.Shared.Models
         public string Name { get; protected set; }
         public string LastRelease { get; protected set; }
         public MangaSite MangaSite { get; protected set; }
-        public int MangaSiteId { get; protected set; }
+        public string MangaSiteId { get; protected set; }
         public virtual ICollection<UserAlert> UserAlerts { get; protected set; }
         public virtual ICollection<ServerAlert> ServerAlerts { get; protected set; }
         public virtual ICollection<PrivateAlert> PrivateAlerts { get; protected set; }
@@ -35,6 +35,7 @@ namespace Discans.Shared.Models
     public enum MangaSite
     {
         MangaUpdates = 1,
-        TuManga = 2
+        TuManga = 2,
+        UnionMangas = 3
     }
 }
