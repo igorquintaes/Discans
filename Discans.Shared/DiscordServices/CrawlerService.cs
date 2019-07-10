@@ -10,17 +10,20 @@ namespace Discans.Shared.DiscordServices
         private readonly MangaUpdatesCrawlerService mangaUpdates;
         private readonly TuMangaCrawlerService tuManga;
         private readonly UnionMangasCrawlerService unionMangas;
+        private readonly InfoAnimeCrawlerService infoAnime;
 
         public IMangaSiteCrawlerService SiteCrawler { get; private set; }
 
         public CrawlerService(
             MangaUpdatesCrawlerService mangaUpdates, 
             TuMangaCrawlerService tuManga,
-            UnionMangasCrawlerService unionMangas)
+            UnionMangasCrawlerService unionMangas,
+            InfoAnimeCrawlerService infoAnimeCrawlerService)
         {
             this.mangaUpdates = mangaUpdates;
             this.tuManga = tuManga;
             this.unionMangas = unionMangas;
+            this.infoAnime = infoAnimeCrawlerService;
         }
 
         public async Task<bool> LoadPageAsync(string link)
@@ -60,6 +63,18 @@ namespace Discans.Shared.DiscordServices
                     unionMangas.SetDocument(unionMangasDocument);
                     SiteCrawler = unionMangas;
                     return true;
+
+                case "infoanime.com.br":
+                    var infoAnimeDocument = await new HtmlWeb().LoadFromWebAsync(uri.AbsoluteUri);
+                    var infoAnimeNodes = infoAnimeDocument.DocumentNode.SelectNodes("//*[@class='grid_i_nome titulo1']");
+                    if (infoAnimeNodes?.Count == 0)
+                        return false;
+
+                    infoAnime.SetDocument(infoAnimeDocument);
+                    infoAnime.MangaUrl = link;
+                    SiteCrawler = infoAnime;
+                    return true;
+
 
                 default:
                     return false;
