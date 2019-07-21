@@ -31,12 +31,11 @@ namespace Discans.WebJob.Services
         private readonly UnionMangasCrawlerService unionMangasService;
         private readonly TuMangaCrawlerService tuMangaService;
         private readonly InfoAnimeCrawlerService infoAnimeService;
-        private readonly IServiceProvider provider;
+        private readonly MangaLivreCrawlerService mangaLivreService;
         private readonly AppDbContext dbContext;
         private readonly ResourceManager resourceManager;
 
         public CommandHandlingService(
-            IServiceProvider provider, 
             DiscordSocketClient discord,
             CommandService commands, 
             MangaService mangaService,
@@ -46,7 +45,8 @@ namespace Discans.WebJob.Services
             MangaUpdatesCrawlerService mangaUpdatesService,
             UnionMangasCrawlerService unionMangasService,
             TuMangaCrawlerService tuMangaService,
-            InfoAnimeCrawlerService infoAnimeCrawlerService,
+            InfoAnimeCrawlerService infoAnimeService,
+            MangaLivreCrawlerService mangaLivreService,
             AppDbContext dbContext)
         {
             this.discord = discord;
@@ -58,8 +58,8 @@ namespace Discans.WebJob.Services
             this.mangaUpdatesService = mangaUpdatesService;
             this.unionMangasService = unionMangasService;
             this.tuMangaService = tuMangaService;
-            this.infoAnimeService = infoAnimeCrawlerService;
-            this.provider = provider;
+            this.infoAnimeService = infoAnimeService;
+            this.mangaLivreService = mangaLivreService;
             this.dbContext = dbContext;
 
             this.discord.Connected += Update;
@@ -86,20 +86,22 @@ namespace Discans.WebJob.Services
         private async Task LastReleases()
         {
             var mangas = await mangaService.GetAll();
-            var mangaUpdatesReleases = mangaUpdatesService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
-            var tuMangasReleases = tuMangaService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
-            var unionMangasReleases = unionMangasService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
-            var infoAnimeReleases = infoAnimeService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+           // var mangaUpdatesReleases = mangaUpdatesService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+           // var tuMangasReleases = tuMangaService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+           // var unionMangasReleases = unionMangasService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+           // var infoAnimeReleases = infoAnimeService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+            var mangaLivreReleases = mangaLivreService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
 
             UserLocalizerService.Languages = await dbContext.UserLocalizer.ToDictionaryAsync(x => x.UserId, x => x.Language);
             ServerLocalizerService.Languages = await dbContext.ServerLocalizer.ToDictionaryAsync(x => x.ServerId, x => x.Language);
 
             var allSitesRelease = new List<IEnumerable<IGrouping<string, MangaRelease>>>()
             {
-                mangaUpdatesReleases,
-                tuMangasReleases,
-                unionMangasReleases,
-                infoAnimeReleases
+                //mangaUpdatesReleases,
+                //tuMangasReleases,
+                //unionMangasReleases,
+                //infoAnimeReleases,
+                mangaLivreReleases
             };
 
             foreach (var siteRelease in allSitesRelease)
@@ -119,6 +121,23 @@ namespace Discans.WebJob.Services
                             .DocumentNode.SelectSingleNode("//a[./img]")
                                 ?.GetAttributeValue("href", ""))
                         ?.Trim();
+
+                        if (string.IsNullOrWhiteSpace(mangaSiteRelease.ScanLink))
+                            mangaSiteRelease.ScanLink = $"https://www.google.com/search?q={mangaSiteRelease.ScanName.Replace(" ", "+")}+{mangaSiteRelease.MangaSiteId.Replace("-", "+")}";
+                    }
+
+                    if (mangaSiteRelease.MangaSite == MangaSite.MangaLivre)
+                    {
+                        mangaSiteRelease.ScanLink = HtmlEntity.DeEntitize(new HtmlWeb()
+                               .Load(mangaSiteRelease.ScanLink)
+                               .DocumentNode.SelectSingleNode("//*[contains(@class, 'topmenu-scan')]//a[@class='website' and @href!='#']")
+                                   ?.GetAttributeValue("href", ""))
+                           ?.Trim()
+                           ?? HtmlEntity.DeEntitize(new HtmlWeb()
+                               .Load(mangaSiteRelease.ScanLink)
+                               .DocumentNode.SelectSingleNode("//*[contains(@class, 'topmenu-scan')]//a[@class='website' and @href!='#'] | //*[contains(@class, 'topmenu-scan')]//a[@href!='#']")
+                                   ?.GetAttributeValue("href", ""))
+                           ?.Trim();
 
                         if (string.IsNullOrWhiteSpace(mangaSiteRelease.ScanLink))
                             mangaSiteRelease.ScanLink = $"https://www.google.com/search?q={mangaSiteRelease.ScanName.Replace(" ", "+")}+{mangaSiteRelease.MangaSiteId.Replace("-", "+")}";
@@ -157,16 +176,20 @@ namespace Discans.WebJob.Services
                     mangaRelease.MangaSite.ToString());
 
                 if (mangaRelease.MangaSite == MangaSite.TuManga ||
-                    mangaRelease.MangaSite == MangaSite.UnionMangas)
+                    mangaRelease.MangaSite == MangaSite.UnionMangas ||
+                    mangaRelease.MangaSite == MangaSite.MangaLivre)
                     message += Environment.NewLine +
                                string.Format(resourceManager.GetString(
                                       nameof(WebJobResource.CheckItOnline), culture),
                                       mangaRelease.MangaSite == MangaSite.TuManga
-                                      ? "https://tmofans.com/library/manga/{mangaSiteId}/discans"
-                                      : "https://unionmangas.top/manga/{mangaRelease.MangaSiteId}");
+                                      ? $"https://tmofans.com/library/manga/{mangaRelease.MangaSiteId}/discans"
+                                      : mangaRelease.MangaSite == MangaSite.UnionMangas
+                                      ? $"https://unionmangas.top/manga/{mangaRelease.MangaSiteId}"
+                                      : mangaRelease.MangaLink);
 
                 if (mangaRelease.MangaSite == MangaSite.UnionMangas ||
-                    mangaRelease.MangaSite == MangaSite.InfoAnime)
+                    mangaRelease.MangaSite == MangaSite.InfoAnime ||
+                    mangaRelease.MangaSite == MangaSite.MangaLivre)
                     message += Environment.NewLine +
                                 string.Format(resourceManager.GetString(
                                        nameof(WebJobResource.ScanInfo), culture),
@@ -200,16 +223,20 @@ namespace Discans.WebJob.Services
                                 mangaRelease.MangaSite.ToString());
 
             if (mangaRelease.MangaSite == MangaSite.TuManga ||
-                mangaRelease.MangaSite == MangaSite.UnionMangas)
+                     mangaRelease.MangaSite == MangaSite.UnionMangas ||
+                     mangaRelease.MangaSite == MangaSite.MangaLivre)
                 message += Environment.NewLine +
                            string.Format(resourceManager.GetString(
                                   nameof(WebJobResource.CheckItOnline), culture),
-                                  mangaRelease.MangaSite == MangaSite.TuManga 
-                                  ? "https://tmofans.com/library/manga/{mangaSiteId}/discans"
-                                  : "https://unionmangas.top/manga/{mangaRelease.MangaSiteId}");
+                                  mangaRelease.MangaSite == MangaSite.TuManga
+                                  ? $"https://tmofans.com/library/manga/{mangaRelease.MangaSiteId}/discans"
+                                  : mangaRelease.MangaSite == MangaSite.UnionMangas
+                                  ? $"https://unionmangas.top/manga/{mangaRelease.MangaSiteId}"
+                                  : mangaRelease.MangaLink);
 
             if (mangaRelease.MangaSite == MangaSite.UnionMangas ||
-                mangaRelease.MangaSite == MangaSite.InfoAnime)
+                mangaRelease.MangaSite == MangaSite.InfoAnime ||
+                mangaRelease.MangaSite == MangaSite.MangaLivre)
                 message += Environment.NewLine +
                             string.Format(resourceManager.GetString(
                                    nameof(WebJobResource.ScanInfo), culture),

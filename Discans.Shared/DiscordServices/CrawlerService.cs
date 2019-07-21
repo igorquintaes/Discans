@@ -13,6 +13,7 @@ namespace Discans.Shared.DiscordServices
         private readonly TuMangaCrawlerService tuManga;
         private readonly UnionMangasCrawlerService unionMangas;
         private readonly InfoAnimeCrawlerService infoAnime;
+        private readonly MangaLivreCrawlerService mangaLivre;
 
         public IMangaSiteCrawlerService SiteCrawler { get; private set; }
 
@@ -20,12 +21,14 @@ namespace Discans.Shared.DiscordServices
             MangaUpdatesCrawlerService mangaUpdates, 
             TuMangaCrawlerService tuManga,
             UnionMangasCrawlerService unionMangas,
-            InfoAnimeCrawlerService infoAnimeCrawlerService)
+            InfoAnimeCrawlerService infoAnime,
+            MangaLivreCrawlerService mangaLivre)
         {
             this.mangaUpdates = mangaUpdates;
             this.tuManga = tuManga;
             this.unionMangas = unionMangas;
-            this.infoAnime = infoAnimeCrawlerService;
+            this.infoAnime = infoAnime;
+            this.mangaLivre = mangaLivre;
         }
 
         public async Task<bool> LoadPageAsync(string link)
@@ -99,6 +102,16 @@ namespace Discans.Shared.DiscordServices
                     SiteCrawler = infoAnime;
                     return true;
 
+                case "mangalivre.com":
+                    var mangaLivreDocument = await new HtmlWeb().LoadFromWebAsync(uri.AbsoluteUri);
+                    var mangaLivreNodes = mangaLivreDocument.DocumentNode.SelectNodes("//*[@id='series-data']//*[contains(@class, 'series-title')]//h1");
+                    if (mangaLivreNodes?.Count != 1)
+                        return false;
+
+                    mangaLivre.SetDocument(mangaLivreDocument);
+                    mangaLivre.MangaUrl = link;
+                    SiteCrawler = mangaLivre;
+                    return true;
 
                 default:
                     return false;
