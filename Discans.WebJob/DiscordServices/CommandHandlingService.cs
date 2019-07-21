@@ -71,7 +71,15 @@ namespace Discans.WebJob.Services
 
         private Task Update()
         {
-            LastReleases().GetAwaiter().GetResult();
+            try
+            {
+                LastReleases().GetAwaiter().GetResult();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error. " + e);
+            }
+
             return Task.FromResult(Program.CloseProgram = true);
         }
 
