@@ -55,6 +55,7 @@ namespace Discans.WebJob
                 .AddSingleton<CrawlerService>()
                 .AddSingleton<MangaUpdatesCrawlerService>()
                 .AddSingleton<TuMangaCrawlerService>()
+                .AddSingleton<InfoAnimeCrawlerService>()
                 .AddSingleton<ChannelService>()
                 .AddDbContext<AppDbContext>(options => options.UseMySql(Helpers.EnvironmentVar(_config, "CONN")), ServiceLifetime.Singleton)
                 .BuildServiceProvider();

@@ -27,7 +27,8 @@ namespace Discans.Shared.Services
                 .Include(x => x.ServerAlerts)
                 .Include(x => x.UserAlerts)
                 .Include(x => x.PrivateAlerts)
-                .FirstOrDefaultAsync(x => x.MangaSiteId == mangaSiteId);
+                .FirstOrDefaultAsync(x => x.MangaSiteId == mangaSiteId && 
+                                          x.MangaSite == mangaSite);
 
             if (manga != null)
                 return manga;

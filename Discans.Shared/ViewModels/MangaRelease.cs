@@ -16,6 +16,6 @@ namespace Discans.Shared.ViewModels
         }
 
         public string ScanName { get; protected set; }
-        public string ScanLink { get; protected set; }
+        public string ScanLink { get; set; }
     }
 }

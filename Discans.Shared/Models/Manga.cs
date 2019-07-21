@@ -36,6 +36,7 @@ namespace Discans.Shared.Models
     {
         MangaUpdates = 1,
         TuManga = 2,
-        UnionMangas = 3
+        UnionMangas = 3,
+        InfoAnime = 4
     }
 }

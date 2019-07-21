@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CheckItOnline" xml:space="preserve">
+    <value>Confira online por aqui: {0}</value>
+  </data>
   <data name="NewRelease" xml:space="preserve">
     <value>Temos um novo capítulo de `{0}`!
 Capítulo lançado: {1}
@@ -126,7 +129,10 @@ Informação obtida por {2}</value>
     <value>Como não houve uma configuração de canal para eu enviar os alertas, estou mandando por aqui '-'
 O Administrador do grupo pode configurar o canal de alertas através do comando `{0}`</value>
   </data>
-  <data name="ReadOnline" xml:space="preserve">
-    <value>Link para ler online: {0}</value>
+  <data name="ScanInfo" xml:space="preserve">
+    <value>
+
+Esse lançamento foi traduzido e disponibilizado pelo grupo `{0}`
+Acompanhe e apoie o trabalho deles: {mangaRelease.ScanLink}"</value>
   </data>
 </root>

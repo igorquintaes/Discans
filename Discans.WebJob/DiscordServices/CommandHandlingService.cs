@@ -15,6 +15,7 @@ using Discans.Shared.ViewModels;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using HtmlAgilityPack;
 
 namespace Discans.WebJob.Services
 {
@@ -29,6 +30,7 @@ namespace Discans.WebJob.Services
         private readonly MangaUpdatesCrawlerService mangaUpdatesService;
         private readonly UnionMangasCrawlerService unionMangasService;
         private readonly TuMangaCrawlerService tuMangaService;
+        private readonly InfoAnimeCrawlerService infoAnimeService;
         private readonly IServiceProvider provider;
         private readonly AppDbContext dbContext;
         private readonly ResourceManager resourceManager;
@@ -44,6 +46,7 @@ namespace Discans.WebJob.Services
             MangaUpdatesCrawlerService mangaUpdatesService,
             UnionMangasCrawlerService unionMangasService,
             TuMangaCrawlerService tuMangaService,
+            InfoAnimeCrawlerService infoAnimeCrawlerService,
             AppDbContext dbContext)
         {
             this.discord = discord;
@@ -55,6 +58,7 @@ namespace Discans.WebJob.Services
             this.mangaUpdatesService = mangaUpdatesService;
             this.unionMangasService = unionMangasService;
             this.tuMangaService = tuMangaService;
+            this.infoAnimeService = infoAnimeCrawlerService;
             this.provider = provider;
             this.dbContext = dbContext;
 
@@ -67,7 +71,15 @@ namespace Discans.WebJob.Services
 
         private Task Update()
         {
-            LastReleases().GetAwaiter().GetResult();
+            try
+            {
+                LastReleases().GetAwaiter().GetResult();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error. " + e);
+            }
+
             return Task.FromResult(Program.CloseProgram = true);
         }
 
@@ -77,6 +89,7 @@ namespace Discans.WebJob.Services
             var mangaUpdatesReleases = mangaUpdatesService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
             var tuMangasReleases = tuMangaService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
             var unionMangasReleases = unionMangasService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+            var infoAnimeReleases = infoAnimeService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
 
             UserLocalizerService.Languages = await dbContext.UserLocalizer.ToDictionaryAsync(x => x.UserId, x => x.Language);
             ServerLocalizerService.Languages = await dbContext.ServerLocalizer.ToDictionaryAsync(x => x.ServerId, x => x.Language);
@@ -85,7 +98,8 @@ namespace Discans.WebJob.Services
             {
                 mangaUpdatesReleases,
                 tuMangasReleases,
-                unionMangasReleases
+                unionMangasReleases,
+                infoAnimeReleases
             };
 
             foreach (var siteRelease in allSitesRelease)
@@ -97,6 +111,18 @@ namespace Discans.WebJob.Services
                     var mangaSiteRelease = siteRelease.First(x => x.Key == manga.MangaSiteId).First();
                     if (manga.LastRelease == mangaSiteRelease.LastRelease)
                         continue;
+
+                    if (mangaSiteRelease.MangaSite == MangaSite.InfoAnime)
+                    {
+                        mangaSiteRelease.ScanLink = HtmlEntity.DeEntitize(new HtmlWeb()
+                            .Load($"https://www.infoanime.com.br/{mangaSiteRelease.ScanLink}")
+                            .DocumentNode.SelectSingleNode("//a[./img]")
+                                ?.GetAttributeValue("href", ""))
+                        ?.Trim();
+
+                        if (string.IsNullOrWhiteSpace(mangaSiteRelease.ScanLink))
+                            mangaSiteRelease.ScanLink = $"https://www.google.com/search?q={mangaSiteRelease.ScanName.Replace(" ", "+")}+{mangaSiteRelease.MangaSiteId.Replace("-", "+")}";
+                    }
 
                     await mangaService.UpdateLastRelease(manga.Id, mangaSiteRelease.LastRelease);
 
@@ -130,18 +156,22 @@ namespace Discans.WebJob.Services
                     mangaRelease.LastRelease,
                     mangaRelease.MangaSite.ToString());
 
-                if (mangaRelease.MangaSite == MangaSite.TuManga)
-                    message += Environment.NewLine + 
+                if (mangaRelease.MangaSite == MangaSite.TuManga ||
+                    mangaRelease.MangaSite == MangaSite.UnionMangas)
+                    message += Environment.NewLine +
                                string.Format(resourceManager.GetString(
-                                      nameof(WebJobResource.ReadOnline), culture), 
-                                      "https://tmofans.com/library/manga/{mangaSiteId}/discans");
+                                      nameof(WebJobResource.CheckItOnline), culture),
+                                      mangaRelease.MangaSite == MangaSite.TuManga
+                                      ? "https://tmofans.com/library/manga/{mangaSiteId}/discans"
+                                      : "https://unionmangas.top/manga/{mangaRelease.MangaSiteId}");
 
-                if (mangaRelease.MangaSite == MangaSite.UnionMangas)
-                {
-                    message += $"{Environment.NewLine}Você pode ler online por aqui: https://unionmangas.top/manga/{mangaRelease.MangaSiteId}";
-                    message += $"{Environment.NewLine}{Environment.NewLine}Esse capítulo foi traduzido e disponibilizado pelo grupo `{mangaRelease.ScanName}`";
-                    message += $"{Environment.NewLine}Acompanhe e apoie o trabalho deles: {mangaRelease.ScanLink}";
-                }
+                if (mangaRelease.MangaSite == MangaSite.UnionMangas ||
+                    mangaRelease.MangaSite == MangaSite.InfoAnime)
+                    message += Environment.NewLine +
+                                string.Format(resourceManager.GetString(
+                                       nameof(WebJobResource.ScanInfo), culture),
+                                       mangaRelease.ScanName,
+                                       mangaRelease.ScanLink);
 
                 var channel = await discord.GetUser(userId).GetOrCreateDMChannelAsync();
                 await channel.SendMessageAsync(message);
@@ -169,18 +199,22 @@ namespace Discans.WebJob.Services
                                 mangaRelease.LastRelease,
                                 mangaRelease.MangaSite.ToString());
 
-            if (mangaRelease.MangaSite == MangaSite.TuManga)
+            if (mangaRelease.MangaSite == MangaSite.TuManga ||
+                mangaRelease.MangaSite == MangaSite.UnionMangas)
                 message += Environment.NewLine +
                            string.Format(resourceManager.GetString(
-                                  nameof(WebJobResource.ReadOnline), culture),
-                                  "https://tmofans.com/library/manga/{mangaSiteId}/discans");
+                                  nameof(WebJobResource.CheckItOnline), culture),
+                                  mangaRelease.MangaSite == MangaSite.TuManga 
+                                  ? "https://tmofans.com/library/manga/{mangaSiteId}/discans"
+                                  : "https://unionmangas.top/manga/{mangaRelease.MangaSiteId}");
 
-            if (mangaRelease.MangaSite == MangaSite.UnionMangas)
-            {
-                message += $"{Environment.NewLine}Você pode ler online por aqui: https://unionmangas.top/manga/{mangaRelease.MangaSiteId}";
-                message += $"{Environment.NewLine}{Environment.NewLine}Esse capítulo foi traduzido e disponibilizado pelo grupo `{mangaRelease.ScanName}`";
-                message += $"{Environment.NewLine}Acompanhe e apoie o trabalho deles: {mangaRelease.ScanLink}";
-            }
+            if (mangaRelease.MangaSite == MangaSite.UnionMangas ||
+                mangaRelease.MangaSite == MangaSite.InfoAnime)
+                message += Environment.NewLine +
+                            string.Format(resourceManager.GetString(
+                                   nameof(WebJobResource.ScanInfo), culture),
+                                   mangaRelease.ScanName,
+                                   mangaRelease.ScanLink);
 
             if (discord.GetGuild(serverId) == null)
             {
