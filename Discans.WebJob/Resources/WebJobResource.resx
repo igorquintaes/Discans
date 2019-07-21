@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CheckItOnline" xml:space="preserve">
-    <value>Check it online url: {0}</value>
+    <value>Check it online: {0}</value>
   </data>
   <data name="NewRelease" xml:space="preserve">
     <value>There is a new release of `{0}`!
@@ -126,7 +126,7 @@ Chapter released: {1}
 Info by: {2}</value>
   </data>
   <data name="NoChannel" xml:space="preserve">
-    <value>As i was not able to find a previously configured channel, I am sending this alert here. You can configure an allert channel using this command: `{0}`</value>
+    <value>As I was not able to find a previously configured channel, I am sending this alert here. You can configure an alert channel using this command: `{0}`</value>
   </data>
   <data name="ScanInfo" xml:space="preserve">
     <value>

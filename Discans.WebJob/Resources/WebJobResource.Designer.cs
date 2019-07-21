@@ -61,7 +61,7 @@ namespace Discans.WebJob.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Check it online url: {0}.
+        ///   Looks up a localized string similar to Check it online: {0}.
         /// </summary>
         internal static string CheckItOnline {
             get {
@@ -81,7 +81,7 @@ namespace Discans.WebJob.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to As i was not able to find a previously configured channel, I am sending this alert here. You can configure an allert channel using this command: `{0}`.
+        ///   Looks up a localized string similar to As I was not able to find a previously configured channel, I am sending this alert here. You can configure an alert channel using this command: `{0}`.
         /// </summary>
         internal static string NoChannel {
             get {

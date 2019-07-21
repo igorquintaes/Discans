@@ -61,7 +61,7 @@ namespace Discans.Resources.Modules.Alert {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sorry, but only an Admin can manage alerts for someone else. If you want, you can manage an alert for yourself :).
+        ///   Looks up a localized string similar to Sorry, but only an Admin can manage alerts for someone else. You still can manage an alert for yourself :).
         /// </summary>
         public static string OnlyAdminAlertSomeoneElse {
             get {
@@ -110,10 +110,10 @@ namespace Discans.Resources.Modules.Alert {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ok! Those guys will be alerted when after a new release!
-        ///You can check all alert list using the folowing command: `{0}`
+        ///   Looks up a localized string similar to Ok! Those guys will be alerted after a new release!
+        ///You can check all alert list using the following command: `{0}`
         ///
-        ///This alert contains the following informations:
+        ///This alert contains the these informations:
         ///```ini
         ///Manga name: [{1}]
         ///Who will be alerted: [{2}]
