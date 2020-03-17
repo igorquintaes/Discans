@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,7 +55,7 @@ namespace Discans.WebJob
                 .AddSingleton<UnionMangasCrawlerService>()
                 .AddSingleton<CrawlerService>()
                 .AddSingleton<MangaUpdatesCrawlerService>()
-                .AddSingleton<TuMangaCrawlerService>()
+                //.AddSingleton<TuMangaCrawlerService>()
                 .AddSingleton<InfoAnimeCrawlerService>()
                 .AddSingleton<ChannelService>()
                 .AddDbContext<AppDbContext>(options => options.UseMySql(Helpers.EnvironmentVar(_config, "CONN")), ServiceLifetime.Singleton)
@@ -62,16 +63,27 @@ namespace Discans.WebJob
 
         private IConfiguration BuildConfig() =>
             new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AssemblyDirectory)
                 .AddJsonFile("config.json")
                 .Build();
 
-        private async Task WaitUntilTaskEnds() => 
+        private async Task WaitUntilTaskEnds() =>
             await Task.Run(() => {
                 do
                 {
                     Thread.Sleep(5000);
                 } while (!CloseProgram);
             });
+
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
     }
 }

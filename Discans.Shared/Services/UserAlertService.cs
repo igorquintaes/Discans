@@ -15,7 +15,7 @@ namespace Discans.Shared.Services
         public UserAlertService(AppDbContext dbContext) => 
             this.dbContext = dbContext;
 
-        public async Task<IList<UserAlert>> GerUserServerAlerts(ulong serverId, ulong userId) => 
+        public async Task<IList<UserAlert>> GetUserServerAlerts(ulong serverId, ulong userId) => 
             await dbContext
                 .UserAlerts
                 .Include(x => x.Manga)

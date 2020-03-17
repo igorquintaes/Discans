@@ -54,7 +54,7 @@ namespace Discans
             .AddSingleton(_config)
             .AddScoped<CrawlerService>()
             .AddScoped<MangaUpdatesCrawlerService>()
-            .AddScoped<TuMangaCrawlerService>()
+            //.AddScoped<TuMangaCrawlerService>()
             .AddScoped<InfoAnimeCrawlerService>()
             .AddScoped<UnionMangasCrawlerService>()
             .AddScoped<MangaService>()

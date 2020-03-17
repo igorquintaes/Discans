@@ -29,23 +29,23 @@ namespace Discans.WebJob.Services
         private readonly ServerAlertService serverAlertService;
         private readonly MangaUpdatesCrawlerService mangaUpdatesService;
         private readonly UnionMangasCrawlerService unionMangasService;
-        private readonly TuMangaCrawlerService tuMangaService;
+        //private readonly TuMangaCrawlerService tuMangaService;
         private readonly InfoAnimeCrawlerService infoAnimeService;
         private readonly IServiceProvider provider;
         private readonly AppDbContext dbContext;
         private readonly ResourceManager resourceManager;
 
         public CommandHandlingService(
-            IServiceProvider provider, 
+            IServiceProvider provider,
             DiscordSocketClient discord,
-            CommandService commands, 
+            CommandService commands,
             MangaService mangaService,
             UserAlertService userAlertService,
             ChannelService channelService,
             ServerAlertService serverAlertService,
             MangaUpdatesCrawlerService mangaUpdatesService,
             UnionMangasCrawlerService unionMangasService,
-            TuMangaCrawlerService tuMangaService,
+            //TuMangaCrawlerService tuMangaService,
             InfoAnimeCrawlerService infoAnimeCrawlerService,
             AppDbContext dbContext)
         {
@@ -57,7 +57,7 @@ namespace Discans.WebJob.Services
             this.serverAlertService = serverAlertService;
             this.mangaUpdatesService = mangaUpdatesService;
             this.unionMangasService = unionMangasService;
-            this.tuMangaService = tuMangaService;
+            //this.tuMangaService = tuMangaService;
             this.infoAnimeService = infoAnimeCrawlerService;
             this.provider = provider;
             this.dbContext = dbContext;
@@ -87,7 +87,7 @@ namespace Discans.WebJob.Services
         {
             var mangas = await mangaService.GetAll();
             var mangaUpdatesReleases = mangaUpdatesService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
-            var tuMangasReleases = tuMangaService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
+            //var tuMangasReleases = tuMangaService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
             var unionMangasReleases = unionMangasService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
             var infoAnimeReleases = infoAnimeService.LastMangaReleases().GroupBy(x => x.MangaSiteId);
 
@@ -97,7 +97,7 @@ namespace Discans.WebJob.Services
             var allSitesRelease = new List<IEnumerable<IGrouping<string, MangaRelease>>>()
             {
                 mangaUpdatesReleases,
-                tuMangasReleases,
+                //tuMangasReleases,
                 unionMangasReleases,
                 infoAnimeReleases
             };
@@ -179,7 +179,7 @@ namespace Discans.WebJob.Services
             catch (Exception e) when (e.Message.Contains("error 50007")  // Discord doc: Cannot send messages to this user
                                    || e.Message.Contains("error 10013")) // Discord doc: Unknown user
             {
-                // We will not send messages under those conditions. 
+                // We will not send messages under those conditions.
                 // It occurs when a user blocks Discans Bot, or when a user account is deleted.
             }
             catch(Exception e)
@@ -191,8 +191,8 @@ namespace Discans.WebJob.Services
         private async Task SendServerMessage(string user, string mangaName, ulong serverId, MangaRelease mangaRelease)
         {
             var culture = CultureInfo.GetCultureInfo(ServerLocalizerService.Languages.FirstOrDefault(x => x.Key == serverId).Value ?? "en-US");
-            var message = user + 
-                          Environment.NewLine + 
+            var message = user +
+                          Environment.NewLine +
                           string.Format(resourceManager.GetString(
                                 nameof(WebJobResource.NewRelease), culture),
                                 mangaName,
@@ -204,7 +204,7 @@ namespace Discans.WebJob.Services
                 message += Environment.NewLine +
                            string.Format(resourceManager.GetString(
                                   nameof(WebJobResource.CheckItOnline), culture),
-                                  mangaRelease.MangaSite == MangaSite.TuManga 
+                                  mangaRelease.MangaSite == MangaSite.TuManga
                                   ? "https://tmofans.com/library/manga/{mangaSiteId}/discans"
                                   : "https://unionmangas.top/manga/{mangaRelease.MangaSiteId}");
 
@@ -222,7 +222,7 @@ namespace Discans.WebJob.Services
                 await serverAlertService.Remove(serverId);
             }
 
-            var dbChannel = await channelService.GetByServerId(serverId);                
+            var dbChannel = await channelService.GetByServerId(serverId);
 
             try
             {

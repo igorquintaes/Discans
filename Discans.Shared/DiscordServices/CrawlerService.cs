@@ -10,20 +10,20 @@ namespace Discans.Shared.DiscordServices
     public class CrawlerService
     {
         private readonly MangaUpdatesCrawlerService mangaUpdates;
-        private readonly TuMangaCrawlerService tuManga;
+        //private readonly TuMangaCrawlerService tuManga;
         private readonly UnionMangasCrawlerService unionMangas;
         private readonly InfoAnimeCrawlerService infoAnime;
 
         public IMangaSiteCrawlerService SiteCrawler { get; private set; }
 
         public CrawlerService(
-            MangaUpdatesCrawlerService mangaUpdates, 
-            TuMangaCrawlerService tuManga,
+            MangaUpdatesCrawlerService mangaUpdates,
+            //TuMangaCrawlerService tuManga,
             UnionMangasCrawlerService unionMangas,
             InfoAnimeCrawlerService infoAnimeCrawlerService)
         {
             this.mangaUpdates = mangaUpdates;
-            this.tuManga = tuManga;
+            //this.tuManga = tuManga;
             this.unionMangas = unionMangas;
             this.infoAnime = infoAnimeCrawlerService;
         }
@@ -46,15 +46,15 @@ namespace Discans.Shared.DiscordServices
                     SiteCrawler = mangaUpdates;
                     return true;
 
-                case "tmofans.com":
-                    var tuMangaDocument = await new HtmlWeb().LoadFromWebAsync(uri.AbsoluteUri);
-                    var tuMangaNodes = tuMangaDocument.DocumentNode.SelectNodes("//div[@id='app']//div[@class='card chapters']");
-                    if (tuMangaNodes?.Count != 1)
-                        return false;
+                //case "tmofans.com":
+                //    var tuMangaDocument = await new HtmlWeb().LoadFromWebAsync(uri.AbsoluteUri);
+                //    var tuMangaNodes = tuMangaDocument.DocumentNode.SelectNodes("//div[@id='app']//div[@class='card chapters']");
+                //    if (tuMangaNodes?.Count != 1)
+                //        return false;
 
-                    tuManga.SetDocument(tuMangaDocument);
-                    SiteCrawler = tuManga;
-                    return true;
+                //    tuManga.SetDocument(tuMangaDocument);
+                //    SiteCrawler = tuManga;
+                //    return true;
 
                 case "unionmangas.top":
                     var result = default(string);

@@ -131,12 +131,12 @@ namespace Discans.Modules.Alert
             await ReplyAsync(resourceManager.GetString(
                 nameof(UserAlertModuleResource.UserAlertRemoveAllSuccess)));
         }
-               
+
         [Command(AlertListCommand)]
         [LocaledRequireContext(ContextType.Guild)]
         public async Task UserAlertList(IGuildUser user)
         {
-            var alerts = await userAlertService.GerUserServerAlerts(Context.Guild.Id, user.Id);
+            var alerts = await userAlertService.GetUserServerAlerts(Context.Guild.Id, user.Id);
 
             if (!alerts.Any())
             {
@@ -148,7 +148,8 @@ namespace Discans.Modules.Alert
             var alertMessages = alerts.Select(x => string.Format(resourceManager.GetString(
                 nameof(UserAlertModuleResource.UserAlertListMessageItem)),
                 x.Manga.Name,
-                x.Manga.LastRelease));
+                x.Manga.LastRelease,
+                x.Manga.MangaSite.ToString()));
 
             await ReplyAsync(resourceManager.GetString(nameof(UserAlertModuleResource.UserAlertListHeader)));
             foreach (var alertChunck in alertMessages.ToList().ChunkList(10))
