@@ -40,7 +40,7 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
         {
             var document = new HtmlWeb().Load("https://www.infoanime.com.br");
             var mangas = new List<MangaRelease>();
-            var nodes = document.DocumentNode.SelectNodes("//tr[./td]").ToList();
+            var nodes = document.DocumentNode.SelectNodes("//tr[./td]")?.ToList();
             for (var i = 0; i < nodes.Count; i++)
             {
                 var mangaSiteId = HtmlEntity.DeEntitize(document.DocumentNode
@@ -54,12 +54,12 @@ namespace Discans.Shared.DiscordServices.CrawlerSites
                     .Trim();
 
                 var scanName = HtmlEntity.DeEntitize(document.DocumentNode
-                        .SelectSingleNode($"(//tr[./td])[{i + 1}]/td[5]/a")
+                        .SelectSingleNode($"(//tr[./td])[{i + 1}]/td[5]//a")
                         .InnerText)
                     .Trim();
 
                 var scanLink = HtmlEntity.DeEntitize(document.DocumentNode
-                        .SelectSingleNode($"(//tr[./td])[{i + 1}]/td[5]/a")
+                        .SelectSingleNode($"(//tr[./td])[{i + 1}]/td[5]//a")
                         .GetAttributeValue("href", ""))
                     .Trim();
 
