@@ -1,4 +1,5 @@
 ﻿{
   "TOKEN": "{TOKEN}",
-  "CONN": "{CONN}"
+  "CONN": "{CONN}",
+  "BOTOWNERID": "{BOTOWNERID}"
 }
