@@ -1,5 +1,5 @@
 # Discans
-Discord bot to notify when manga chapter is released in english, based on online websites that provide manga releases. You can invite the last version of Discans to your server [using this url](https://discordapp.com/api/oauth2/authorize?client_id=556213286383648769&permissions=154624&scope=bot).
+Discord bot to notify when manga chapter is released in english, based on online websites that provide manga releases.
 
 ## Compatible Websites
 - MangaUpdates (url example: https://www.mangaupdates.com/series.html?id=88)
@@ -7,7 +7,7 @@ Discord bot to notify when manga chapter is released in english, based on online
 - MangaUpdates (url example: https://unionmangas.top/manga/berserk)
 
 ## How to Use discans in your server
-- Invite Discans [using this url](https://discordapp.com/api/oauth2/authorize?client_id=556213286383648769&permissions=154624&scope=bot), or create and deploy your own version of the bot;
+- Create and deploy your own version of the bot;
 - Open the channel that you want to receive Discans notifications and send `discans channel` keywords;
 - If you don't want to chat with Discans in english, you can change Discans language using the command `discans language [language in format xx-XX]`. We are supporting mainly two languages: `en-US` and `pt-BR`;
 - Now you can send commands for alert creation. You can check more about it above.
